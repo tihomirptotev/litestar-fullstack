@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/*
+ * Brand palette — Nuxt port of the React app's `styles.css` brand tokens
+ * (HSL channels from src/js/web/src/styles.css).
+ */
+@theme {
+  --color-brand-navy: hsl(234 25% 17%);
+  --color-brand-gold: hsl(41 83% 59%);
+  --color-brand-gold-light: hsl(40 100% 75%);
+  --color-brand-gray-light: hsl(220 14% 96%);
+}
+
+/* RetroGrid tokens (components/ui/retro-grid.vue) */
+:root {
+  --grid-line: rgba(255, 255, 255, 0.06);
+  --grid-line-strong: rgba(255, 255, 255, 0.12);
+  --grid-star: rgba(237, 182, 65, 0.5);
+  --grid-glow: rgba(237, 182, 65, 0.15);
+}
+
+.dark {
+  --grid-line: rgba(255, 255, 255, 0.08);
+  --grid-line-strong: rgba(255, 255, 255, 0.16);
+  --grid-star: rgba(237, 182, 65, 0.5);
+  --grid-glow: rgba(237, 182, 65, 0.2);
+}
+
+@keyframes grid {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes star-drift {
+  0% {
+    transform: translate(0, -140px);
+  }
+  100% {
+    transform: translate(0, -100px);
+  }
+}
