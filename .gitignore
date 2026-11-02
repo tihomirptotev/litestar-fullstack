@@ -197,3 +197,4 @@ AGENT.md
 .agent/
 .geminiignore
 specs/
+.task/

@@ -1,33 +1,39 @@
 /**
  * Build script for email templates.
  *
- * Uses Bun to compile TSX components and render to static HTML with all
- * styles inlined for email client compatibility.
+ * Uses Maizzle (@maizzle/framework) to render Vue SFC email templates to
+ * static HTML with all styles processed for email client compatibility.
  *
  * Output goes to src/py/app/server/static/email/ for wheel bundling.
  *
- * Usage: bun run build-emails.ts
+ * Usage: bun run build-emails.ts (or node build-emails.ts)
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { basename, resolve } from "node:path"
-import { render } from "@react-email/render"
+import { render } from "@maizzle/framework"
 
 // Output directory (inside Python package for wheel bundling)
-const OUTPUT_DIR = resolve(import.meta.dir, "../../py/app/server/static/email")
+const OUTPUT_DIR = resolve(process.cwd(), "../../py/app/server/static/email")
 
 // Optional global CSS file for additional styles
-const GLOBAL_CSS_PATH = resolve(import.meta.dir, "src/styles/global.css")
+const GLOBAL_CSS_PATH = resolve(process.cwd(), "src/styles/global.css")
 
 // Ensure output directory exists
 mkdirSync(OUTPUT_DIR, { recursive: true })
 
 // Discover email templates
-const emailsDir = resolve(import.meta.dir, "src/emails")
+const emailsDir = resolve(process.cwd(), "src/emails")
+
+// Maizzle render options: resolve components from src/components/
+const RENDER_OPTIONS = {
+  root: process.cwd(),
+  components: { source: [{ path: "src/components" }] },
+}
 
 /**
  * Inline CSS into HTML head if a global CSS file exists.
- * React Email already inlines component styles, but this allows
+ * Maizzle already inlines component styles, but this allows
  * for additional global styles if needed.
  */
 function inlineGlobalCSS(html: string): string {
@@ -48,35 +54,24 @@ function inlineGlobalCSS(html: string): string {
 async function buildTemplates() {
   console.log("📧 Building email templates...\n")
 
-  const templateFiles = readdirSync(emailsDir).filter((f) => f.endsWith(".tsx") && !f.startsWith("_"))
+  const templateFiles = readdirSync(emailsDir).filter((f) => f.endsWith(".vue") && !f.startsWith("_"))
 
   let successCount = 0
   let failCount = 0
 
   for (const file of templateFiles) {
-    const name = basename(file, ".tsx")
-    const modulePath = resolve(emailsDir, file)
+    const name = basename(file, ".vue")
+    const templatePath = resolve(emailsDir, file)
 
     try {
-      // Dynamic import the TSX file (Bun handles this natively)
-      const module = await import(modulePath)
-      const Component = module.default
-
-      if (!Component) {
-        console.warn(`   ⚠ Warning: No default export in ${file}, skipping`)
-        continue
-      }
-
-      // Render to static HTML with react-email (all styles inlined)
-      let html = await render(Component(), {
-        pretty: true,
-      })
+      // Render to static HTML with Maizzle (styles inlined, doctype added)
+      const { html } = await render(templatePath, RENDER_OPTIONS)
 
       // Optionally inline global CSS
-      html = inlineGlobalCSS(html)
+      const output = inlineGlobalCSS(html)
 
       const outputPath = resolve(OUTPUT_DIR, `${name}.html`)
-      writeFileSync(outputPath, html, "utf-8")
+      writeFileSync(outputPath, output, "utf-8")
       console.log(`   ✓ ${name}.html`)
       successCount++
     } catch (error) {

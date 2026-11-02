@@ -4,10 +4,10 @@ Development
 
 This section describes tips on developing using this example repository.
 
-Makefile
+Taskfile
 --------
 
-This repository includes a ``Makefile`` with common commands for development.
+This repository includes a ``Taskfile.yml`` with common commands for development. Run ``task --list`` to see all available tasks.
 
 
 Install Development Environment
@@ -17,7 +17,7 @@ This command will remove any existing environment and install a new environment 
 
 .. code-block:: shell
 
-    make install
+    task install
 
 Upgrade Project Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -30,7 +30,7 @@ This command will upgrade all components of the application at the same time. It
 
 .. code-block:: shell
 
-    make upgrade
+    task upgrade
 
 Execute Pre-commit
 ^^^^^^^^^^^^^^^^^^
@@ -39,7 +39,7 @@ This command will automatically execute the pre-commit process for the project.
 
 .. code-block:: shell
 
-    make lint
+    task lint
 
 Generate New Migrations
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -66,7 +66,7 @@ This command executes all tests for the project.
 
 .. code-block:: shell
 
-    make test
+    task test
 
 Generate TypeScript Types
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -75,12 +75,12 @@ After backend schema changes, regenerate the TypeScript client:
 
 .. code-block:: shell
 
-    make types
+    task types
 
-Full Makefile
+Full Taskfile
 -------------
 
-.. dropdown:: Full Makefile
+.. dropdown:: Full Taskfile
 
-    .. literalinclude:: ../../Makefile
-        :language: make
+    .. literalinclude:: ../../Taskfile.yml
+        :language: yaml

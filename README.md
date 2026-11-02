@@ -38,7 +38,7 @@ Take what you need and adapt it to your own projects
 To quickly get a development environment running, run the following:
 
 ```shell
-make install
+task install
 . .venv/bin/activate
 ```
 
@@ -47,7 +47,7 @@ make install
 ```bash
 cp .env.local.example .env
 . .venv/bin/activate
-make start-infra
+task start-infra
 app database upgrade
 app run
 ```

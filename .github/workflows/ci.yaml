@@ -69,11 +69,14 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
+      - name: Setup Task
+        uses: arduino/setup-task@v2
+
       - name: Install dependencies
         run: uv sync --all-groups
 
       - name: Build email templates
-        run: make build-emails
+        run: task build-emails
 
       - name: Test with Coverage
         run: uv run pytest src/py/tests --cov=src/py/app --cov-report=xml
@@ -103,11 +106,14 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Setup Task
+        uses: arduino/setup-task@v2
+
       - name: Install dependencies
         run: uv sync --all-groups
 
       - name: Build docs
-        run: uv run make docs
+        run: task docs
 
       - name: Save PR number
         env:

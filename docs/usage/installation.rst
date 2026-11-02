@@ -7,12 +7,12 @@ The following is a guide to help you get this repository running.
 Setup
 -----
 
-Most of the development-related tasks are included in the ``Makefile`` (See: :doc:`development`).
+Most of the development-related tasks are included in the ``Taskfile.yml`` (See: :doc:`development`).
 To install an environment, with all development packages run:
 
 .. code-block:: bash
 
-    make install
+    task install
 
 This command does the following:
 

@@ -5,7 +5,7 @@ Contribution Guide
 Setting up the environment
 --------------------------
 
-1. If you do not have already have Astral's UV installed, run ``make install-uv``
+1. If you do not have already have Astral's `uv <https://docs.astral.sh/uv/>`_ installed, run ``task install-uv``
 2. Run ``uv sync --all-groups`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
    the dependencies
 3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``uv sync --group docs``
@@ -59,7 +59,7 @@ To run or build the docs locally, you need to first install the required depende
 
      uv sync --group docs
 
-Then you can serve the documentation with ``make docs-serve``, or build them with ``make docs``
+Then you can serve the documentation with ``task docs-serve``, or build them with ``task docs``
 
 Writing and editing docs
 ++++++++++++++++++++++++
