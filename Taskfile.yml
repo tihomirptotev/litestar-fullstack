@@ -1,0 +1,324 @@
+version: '3'
+
+# Taskfile for project tasks.
+# Usage: task --list
+
+env:
+  COMPOSE_DIR: tools/deploy/docker
+  COMPOSE_INFRA: tools/deploy/docker/docker-compose.infra.yml
+  COMPOSE_APP: tools/deploy/docker/docker-compose.yml
+  COMPOSE_DEV_FILES: -f tools/deploy/docker/docker-compose.yml -f tools/deploy/docker/docker-compose.override.yml
+
+vars:
+  TEMPLATES_DIR: src/js/templates
+
+tasks:
+  # =============================================================================
+  # Developer Utils
+  # =============================================================================
+  install-uv:
+    desc: Install latest version of uv
+    cmd: curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+
+  install-bun:
+    desc: Install latest version of bun
+    cmd: curl -fsSL https://bun.sh/install | bash >/dev/null 2>&1
+
+  install:
+    desc: Install the project, dependencies, and pre-commit for local development
+    cmds:
+      - task: destroy
+      - task: clean
+      - uv python pin 3.13
+      - uv venv
+      - uv sync --all-extras --dev
+      - cmd: |
+          if ! command -v bun >/dev/null 2>&1; then
+            task install-bun
+          fi
+      - cd src/js/web && bun install --frozen-lockfile
+
+  upgrade:
+    desc: Upgrade all dependencies to the latest stable versions
+    cmds:
+      - uv lock --upgrade
+      - cd src/js/web && bun update
+      - uv run pre-commit autoupdate
+
+  clean:
+    desc: Cleanup temporary build artifacts
+    cmds:
+      - cmd: |
+          rm -rf pytest_cache .ruff_cache .hypothesis build/ dist/ .eggs/ .coverage coverage.xml coverage.json htmlcov/ .pytest_cache src/py/tests/.pytest_cache src/py/tests/**/.pytest_cache .mypy_cache .unasyncd_cache/ .auto_pytabs_cache node_modules src/js/web/node_modules src/js/templates/node_modules
+          find . -name '*.egg-info' -exec rm -rf {} +
+          find . -type f -name '*.egg' -exec rm -f {} +
+          find . -name '*.pyc' -exec rm -f {} +
+          find . -name '*.pyo' -exec rm -f {} +
+          find . -name '*~' -exec rm -f {} +
+          find . -name '__pycache__' -exec rm -rf {} +
+          find . -name '.ipynb_checkpoints' -exec rm -rf {} +
+      - task: docs-clean
+
+  destroy:
+    desc: Destroy the virtual environment
+    cmd: rm -rf .venv
+
+  lock:
+    desc: Rebuild lockfiles from scratch, updating all dependencies
+    cmd: uv lock --upgrade
+
+  release:
+    desc: Bump version and create release tag (pass bump level as argument, e.g. task release -- minor)
+    cmds:
+      - task: clean
+      - uv run bump-my-version bump {{.CLI_ARGS | default "patch"}}
+      - task: build
+
+  # =============================================================================
+  # Tests, Linting, Coverage
+  # =============================================================================
+  ruff:
+    desc: Run ruff
+    cmds:
+      - uv run ruff check --fix src/py/app src/py/tests tools
+      - uv run ruff format src/py/app src/py/tests tools
+
+  biome:
+    desc: Run biome
+    cmd: cd src/js/web && bun run lint
+
+  codespell:
+    desc: Run codespell
+    cmd: uv run codespell
+
+  mypy:
+    desc: Run mypy
+    cmd: uv run dmypy run src/py/app src/py/tests tools
+
+  pyright:
+    desc: Run pyright
+    cmd: uv run pyright
+
+  type-check:
+    desc: Run all type checking
+    cmds:
+      - task: mypy
+      - task: pyright
+
+  pre-commit:
+    desc: Run pre-commit hooks; includes ruff formatting and linting, codespell
+    cmd: uv run pre-commit run --color=always --all-files
+
+  slotscheck:
+    desc: Run slotscheck
+    cmd: uv run slotscheck -m app
+
+  fix:
+    desc: Run formatting scripts
+    cmds:
+      - uv run ruff check --fix --unsafe-fixes
+      - cd src/js/web && bun run lint
+
+  lint:
+    desc: Run all linting
+    cmds:
+      - task: ruff
+      - task: type-check
+      - task: slotscheck
+      - task: biome
+      - task: codespell
+
+  coverage:
+    desc: Run the tests and generate coverage report
+    cmds:
+      - uv run pytest src/py/tests --cov --quiet
+      - uv run coverage html >/dev/null 2>&1
+      - uv run coverage xml >/dev/null 2>&1
+
+  test:
+    desc: Run the tests
+    cmd: uv run pytest src/py/tests --quiet
+
+  test-all:
+    desc: Run all tests
+    cmds:
+      - uv run pytest src/py/tests -m '' --quiet
+
+  check-all:
+    desc: Run all linting, tests, and coverage checks
+    cmds:
+      - task: lint
+      - task: test-all
+      - task: coverage
+
+  # =============================================================================
+  # Docs
+  # =============================================================================
+  docs-clean:
+    desc: Dump the existing built docs
+    cmd: rm -rf docs/_build
+
+  docs-serve:
+    desc: Serve the docs locally
+    cmds:
+      - task: docs-clean
+      - uv run sphinx-autobuild docs docs/_build/ -j auto --watch app --watch docs --watch tests --watch CONTRIBUTING.rst --port 8002
+
+  docs:
+    desc: Dump the existing built docs and rebuild them
+    cmds:
+      - task: docs-clean
+      - uv run sphinx-build -M html docs docs/_build/ -E -a -j auto -W --keep-going
+
+  docs-linkcheck:
+    desc: Run the link check on the docs
+    cmd: uv run sphinx-build -b linkcheck ./docs ./docs/_build -D linkcheck_ignore='http://.*','https://.*'
+
+  docs-linkcheck-full:
+    desc: Run the full link check on the docs
+    cmd: uv run sphinx-build -b linkcheck ./docs ./docs/_build -D linkcheck_anchors=0
+
+  # =============================================================================
+  # Build
+  # =============================================================================
+  build:
+    desc: Build wheel with frontend assets
+    cmds:
+      - task: build-emails
+      - task: build-assets
+      - task: build-wheel
+
+  build-assets:
+    desc: Build frontend assets
+    cmd: uv run app assets build
+
+  build-wheel:
+    desc: Build Python wheel
+    cmd: uv build --wheel
+
+  build-emails:
+    desc: Build Vue email templates to HTML
+    cmds:
+      - task: emails:build
+
+  # =============================================================================
+  # Email templates (npm wrappers around emails:* tasks)
+  # =============================================================================
+  emails:install:
+    desc: Install email template dependencies
+    cmd: npm install
+    dir: '{{.TEMPLATES_DIR}}'
+    sources:
+      - package.json
+      - package-lock.json
+    generates:
+      - node_modules/.package-lock.json
+
+  emails:build:
+    desc: Build email templates to HTML (src/py/app/server/static/email/)
+    cmds:
+      - task: emails:install
+      - npm run build
+    dir: '{{.TEMPLATES_DIR}}'
+    sources:
+      - src/**/*.{vue,ts,css}
+      - build-emails.ts
+      - package.json
+    generates:
+      - ../../py/app/server/static/email/*.html
+
+  emails:watch:
+    desc: Rebuild email templates on change
+    cmds:
+      - task: emails:install
+      - npm run dev
+    dir: '{{.TEMPLATES_DIR}}'
+
+  emails:clean:
+    desc: Remove email template build artifacts and node_modules
+    cmd: rm -rf node_modules
+    dir: '{{.TEMPLATES_DIR}}'
+
+  # =============================================================================
+  # Local Infrastructure (Database only - for normal development)
+  # =============================================================================
+  start-infra:
+    desc: Start local infrastructure (PostgreSQL)
+    cmd: docker compose -f $COMPOSE_INFRA up -d --force-recreate
+
+  stop-infra:
+    desc: Stop local infrastructure
+    cmd: docker compose -f $COMPOSE_INFRA down
+
+  wipe-infra:
+    desc: Remove local infrastructure and volumes
+    cmd: docker compose -f $COMPOSE_INFRA down -v --remove-orphans
+
+  infra-logs:
+    desc: Tail infrastructure logs
+    cmd: docker compose -f $COMPOSE_INFRA logs -f
+
+  mailpit:
+    desc: Open Mailpit web interface (UI at http://localhost:18025, SMTP at localhost:11025)
+    cmd: |
+      if command -v open >/dev/null 2>&1; then
+        open http://localhost:18025
+      elif command -v xdg-open >/dev/null 2>&1; then
+        xdg-open http://localhost:18025
+      else
+        echo "Please open http://localhost:18025 in your browser"
+      fi
+
+  # =============================================================================
+  # Full Docker Stack - Production (Distroless)
+  # =============================================================================
+  start-all-docker:
+    desc: Start production Docker stack (distroless + database)
+    cmd: docker compose -f $COMPOSE_APP up -d --build --force-recreate
+
+  stop-all-docker:
+    desc: Stop production Docker stack
+    cmd: docker compose -f $COMPOSE_APP down
+
+  wipe-all-docker:
+    desc: Remove production Docker stack, images, and volumes
+    cmd: docker compose -f $COMPOSE_APP down -v --remove-orphans --rmi local
+
+  docker-logs:
+    desc: Tail production Docker stack logs
+    cmd: docker compose -f $COMPOSE_APP logs -f
+
+  # =============================================================================
+  # Full Docker Stack - Development
+  # =============================================================================
+  start-all-docker-dev:
+    desc: Start development Docker stack (with hot-reload)
+    cmd: docker compose $COMPOSE_DEV_FILES up -d --build --force-recreate
+
+  stop-all-docker-dev:
+    desc: Stop development Docker stack
+    cmd: docker compose $COMPOSE_DEV_FILES down
+
+  wipe-all-docker-dev:
+    desc: Remove development Docker stack, images, and volumes
+    cmd: docker compose $COMPOSE_DEV_FILES down -v --remove-orphans --rmi local
+
+  docker-dev-logs:
+    desc: Tail development Docker stack logs
+    cmd: docker compose $COMPOSE_DEV_FILES logs -f
+
+  docker-shell:
+    desc: Open a shell in the app container
+    cmds:
+      - cmd: docker compose $COMPOSE_DEV_FILES exec app /bin/bash
+        ignore_error: true
+      - docker compose $COMPOSE_DEV_FILES exec app /bin/sh
+
+  # =============================================================================
+  # Type Generation
+  # =============================================================================
+  types:
+    desc: Export OpenAPI schema and generate TypeScript types/client
+    cmds:
+      - mkdir -p tmp
+      - TMPDIR=$PWD/tmp uv run app assets generate-types
