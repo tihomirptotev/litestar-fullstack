@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from litestar.testing import AsyncTestClient
 
-pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.teams, pytest.mark.email]
+pytestmark = [pytest.mark.anyio, pytest.mark.integration, pytest.mark.workspaces, pytest.mark.email]
 
 
 @pytest.fixture(autouse=True)
@@ -23,20 +23,20 @@ def clear_email_outbox() -> None:
     InMemoryBackend.clear()
 
 
-async def test_team_invitation_email_url(
+async def test_workspace_invitation_email_url(
     authenticated_client: AsyncTestClient,
-    test_team: m.Team,
+    test_workspace: m.Workspace,
     await_events: Callable[[], Coroutine[Any, Any, None]],
 ) -> None:
-    """Test that team invitation email contains the correct URL, not example.com."""
+    """Test that workspace invitation email contains the correct URL, not example.com."""
     invitation_data = {
         "email": "newmember@example.com",
-        "role": m.TeamRoles.MEMBER.value,
+        "role": m.WorkspaceRoles.MEMBER.value,
     }
 
-    # This triggers the 'team_invitation_created' event
+    # This triggers the 'workspace_invitation_created' event
     response = await authenticated_client.post(
-        f"/api/teams/{test_team.id}/invitations",
+        f"/api/workspaces/{test_workspace.id}/invitations",
         json=invitation_data,
     )
     assert response.status_code == 201
@@ -54,12 +54,12 @@ async def test_team_invitation_email_url(
 
     # Check that it contains the expected path segments
     assert message.html_body is not None
-    assert "/teams/" in message.html_body
+    assert "/workspaces/" in message.html_body
     assert "/invitations/" in message.html_body
 
     # The invitation URL must point at the frontend accept route:
-    # /teams/{team_id}/invitations/{invitation_id}/accept
-    expected_path = f"/teams/{test_team.id}/invitations/{invitation_id}/accept"
+    # /workspaces/{workspace_id}/invitations/{invitation_id}/accept
+    expected_path = f"/workspaces/{test_workspace.id}/invitations/{invitation_id}/accept"
     assert expected_path in message.html_body
 
     # This should FAIL currently because it's hardcoded to https://example.com in listeners.py

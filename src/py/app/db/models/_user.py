@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from app.db.models._oauth_account import UserOAuthAccount
     from app.db.models._password_reset_token import PasswordResetToken
     from app.db.models._refresh_token import RefreshToken
-    from app.db.models._team_member import TeamMember
+    from app.db.models._workspace_member import WorkspaceMember
     from app.db.models._user_role import UserRole
 
 
@@ -81,7 +81,7 @@ class User(UUIDv7AuditBase):
         uselist=True,
         cascade="all, delete",
     )
-    teams: Mapped[list[TeamMember]] = relationship(
+    workspaces: Mapped[list[WorkspaceMember]] = relationship(
         back_populates="user",
         lazy="selectin",
         uselist=True,

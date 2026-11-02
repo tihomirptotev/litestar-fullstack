@@ -179,14 +179,14 @@ async def test_send_password_reset_confirmation_email(
     assert len(InMemoryBackend.outbox) == 1
 
 
-async def test_send_team_invitation_email(
+async def test_send_workspace_invitation_email(
     app_email_service: AppEmailService,
 ) -> None:
-    """Test sending team invitation email."""
-    result = await app_email_service.send_team_invitation_email(
+    """Test sending workspace invitation email."""
+    result = await app_email_service.send_workspace_invitation_email(
         invitee_email="invitee@example.com",
         inviter_name="Inviter User",
-        team_name="Test Team",
+        workspace_name="Test Workspace",
         invitation_url="http://localhost:8000/accept-invite?token=abc123",
     )
 
@@ -194,7 +194,7 @@ async def test_send_team_invitation_email(
     assert len(InMemoryBackend.outbox) == 1
     message = InMemoryBackend.outbox[0]
     assert "invitee@example.com" in message.to
-    assert "Test Team" in message.subject
+    assert "Test Workspace" in message.subject
 
 
 async def test_verification_email_content_structure(

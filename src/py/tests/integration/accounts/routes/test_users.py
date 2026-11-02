@@ -63,9 +63,9 @@ async def test_accounts_delete(client: "AsyncClient", superuser_token_headers: d
         headers=superuser_token_headers,
     )
     assert response.status_code == 204
-    # ensure we didn't cascade delete the teams the user owned
+    # ensure we didn't cascade delete the workspaces the user owned
     response = await client.get(
-        "/api/teams/97108ac1-ffcb-411d-8b1e-d9183399f63b",
+        "/api/workspaces/97108ac1-ffcb-411d-8b1e-d9183399f63b",
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
@@ -97,7 +97,7 @@ async def test_superuser_role_access(
     user_token_headers: dict[str, str],
     superuser_token_headers: dict[str, str],
 ) -> None:
-    response = await client.get("/api/teams", headers=user_token_headers)
+    response = await client.get("/api/workspaces", headers=user_token_headers)
     assert response.status_code == 200
     assert int(response.json()["total"]) == 1
 
@@ -109,18 +109,18 @@ async def test_superuser_role_access(
     assert response.status_code == 201
     assert response.json()["message"] == "Successfully assigned the 'superuser' role to user@example.com."
     response = await client.patch(
-        "/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999",
+        "/api/workspaces/81108ac1-ffcb-411d-8b1e-d91833999999",
         json={"name": "TEST UPDATE"},
         headers=user_token_headers,
     )
     assert response.status_code == 200
-    response = await client.get("/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
+    response = await client.get("/api/workspaces/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
     assert response.status_code == 200
-    response = await client.get("/api/teams", headers=user_token_headers)
+    response = await client.get("/api/workspaces", headers=user_token_headers)
     assert response.status_code == 200
     assert int(response.json()["total"]) == 3
 
-    response = await client.get("/api/teams", headers=superuser_token_headers)
+    response = await client.get("/api/workspaces", headers=superuser_token_headers)
     assert response.status_code == 200
     assert int(response.json()["total"]) == 3
     response = await client.post(
@@ -129,13 +129,13 @@ async def test_superuser_role_access(
         headers=superuser_token_headers,
     )
     assert response.status_code == 201
-    response = await client.delete("/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
+    response = await client.delete("/api/workspaces/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
     assert response.status_code == 403
-    response = await client.delete("/api/teams/97108ac1-ffcb-411d-8b1e-d9183399f63b", headers=user_token_headers)
+    response = await client.delete("/api/workspaces/97108ac1-ffcb-411d-8b1e-d9183399f63b", headers=user_token_headers)
     assert response.status_code == 204
 
-    response = await client.get("/api/teams/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
+    response = await client.get("/api/workspaces/81108ac1-ffcb-411d-8b1e-d91833999999", headers=user_token_headers)
     assert response.status_code == 403
-    response = await client.get("/api/teams", headers=user_token_headers)
+    response = await client.get("/api/workspaces", headers=user_token_headers)
     assert response.status_code == 200
     assert int(response.json()["total"]) == 0

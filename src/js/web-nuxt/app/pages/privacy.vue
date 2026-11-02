@@ -30,7 +30,7 @@ useHead({ title: "Privacy Policy — Litestar Fullstack" })
           </p>
           <div class="space-y-2">
             <h3 class="text-lg font-semibold text-foreground">Data collected</h3>
-            <p>Account profile data, authentication events, team membership metadata, and operational diagnostics for queues and background jobs.</p>
+            <p>Account profile data, authentication events, workspace membership metadata, and operational diagnostics for queues and background jobs.</p>
           </div>
           <div class="space-y-2">
             <h3 class="text-lg font-semibold text-foreground">Retention</h3>

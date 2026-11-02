@@ -13,7 +13,7 @@ from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.guards import requires_superuser
 from app.domain.admin.deps import provide_audit_log_service
 from app.domain.admin.schemas import ActivityLogEntry, DashboardStats, RecentActivity
-from app.domain.teams.deps import provide_teams_service
+from app.domain.workspaces.deps import provide_workspaces_service
 
 if TYPE_CHECKING:
     from litestar import Request
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
     from app.domain.accounts.services import UserService
     from app.domain.admin.services import AuditLogService
-    from app.domain.teams.services import TeamService
+    from app.domain.workspaces.services import WorkspaceService
 
 
 class DashboardController(Controller):
@@ -32,7 +32,7 @@ class DashboardController(Controller):
     guards = [requires_superuser]
     dependencies = {
         "users_service": Provide(provide_users_service),
-        "teams_service": Provide(provide_teams_service),
+        "workspaces_service": Provide(provide_workspaces_service),
         "audit_service": Provide(provide_audit_log_service),
     }
 
@@ -41,7 +41,7 @@ class DashboardController(Controller):
         self,
         request: Request[m.User, Token, Any],
         users_service: UserService,
-        teams_service: TeamService,
+        workspaces_service: WorkspaceService,
         audit_service: AuditLogService,
     ) -> DashboardStats:
         """Get system statistics for admin dashboard.
@@ -49,7 +49,7 @@ class DashboardController(Controller):
         Args:
             request: Request with authenticated superuser
             users_service: User service
-            teams_service: Team service
+            workspaces_service: Workspace service
             audit_service: Audit log service
 
         Returns:
@@ -65,7 +65,7 @@ class DashboardController(Controller):
         new_users_today = await users_service.count(m.User.created_at >= today_start)
         new_users_week = await users_service.count(m.User.created_at >= week_start)
 
-        total_teams = await teams_service.count()
+        total_workspaces = await workspaces_service.count()
 
         audit_stats = await audit_service.get_stats(hours=24)
         events_today = audit_stats["total_events"]
@@ -74,7 +74,7 @@ class DashboardController(Controller):
             total_users=total_users,
             active_users=active_users,
             verified_users=verified_users,
-            total_teams=total_teams,
+            total_workspaces=total_workspaces,
             new_users_today=new_users_today,
             new_users_week=new_users_week,
             events_today=events_today,

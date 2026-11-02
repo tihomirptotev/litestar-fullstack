@@ -112,14 +112,14 @@ async def test_registration_with_duplicate_email(client: AsyncTestClient) -> Non
     assert second_response.status_code == 409
 
 
-async def test_registration_with_initial_team(client: AsyncTestClient) -> None:
-    """Test registration with initial team creation."""
-    email = _unique_email("teamuser")
+async def test_registration_with_initial_workspace(client: AsyncTestClient) -> None:
+    """Test registration with initial workspace creation."""
+    email = _unique_email("workspaceuser")
     user_data = {
         "email": email,
         "password": "SecurePass123!",
-        "name": "Team User",
-        "initial_team_name": "My Team",
+        "name": "Workspace User",
+        "initial_workspace_name": "My Workspace",
     }
 
     response = await client.post("/api/access/signup", json=user_data)

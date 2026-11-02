@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * About page — Nuxt port of the React app's `routes/_public/about.tsx`
- * (Konami-code easter egg, cursor-follow glow, features/team cards).
+ * (Konami-code easter egg, cursor-follow glow, features/workspace cards).
  * framer-motion animations are replaced with CSS transitions.
  * Layout: public layout's header/footer show for content pages — matching
  * React's _public pathless layout.
@@ -55,7 +55,7 @@ const glowStyle = computed(() => ({
 
 // --- Content data ----------------------------------------------------------
 const teamMembers = [
-  { name: "Litestar Team", role: "Core Maintainers", avatar: "L" },
+  { name: "Litestar Workspace", role: "Core Maintainers", avatar: "L" },
   { name: "Community", role: "Contributors", avatar: "C" },
   { name: "You", role: "Builder", avatar: "Y" },
 ]
@@ -159,7 +159,7 @@ const features = [
         </UCard>
       </div>
 
-      <!-- Team section -->
+      <!-- Workspace section -->
       <div class="mb-12">
         <h2 class="mb-6 text-2xl font-semibold">
           Built by the Community

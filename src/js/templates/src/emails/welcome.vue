@@ -52,7 +52,7 @@ const listItemStyle = {
     <ul :style="listStyle">
       <li :style="listItemStyle">Complete your profile settings</li>
       <li :style="listItemStyle">Enable two-factor authentication for extra security</li>
-      <li :style="listItemStyle">Create or join a team</li>
+      <li :style="listItemStyle">Create or join a workspace</li>
     </ul>
 
     <div :style="{ textAlign: 'center', margin: '32px 0' }">
@@ -60,7 +60,7 @@ const listItemStyle = {
     </div>
 
     <Text :style="{ margin: '24px 0 0 0', color: '#9ca3af', fontSize: '13px' }">
-      If you have any questions, feel free to reach out to our support team.
+      If you have any questions, feel free to reach out to our support workspace.
     </Text>
   </EmailLayout>
 </template>

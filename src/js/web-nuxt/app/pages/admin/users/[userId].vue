@@ -3,7 +3,8 @@
  * Admin user detail — Nuxt port of `routes/_app/admin/users/$userId.tsx`.
  * View/update/delete a single user as a superuser.
  */
-import { type AdminUserDetail, adminDeleteUser, adminGetUser, adminUpdateUser } from "#shared/api/sdk.gen"
+import { adminDeleteUser, adminGetUser, adminUpdateUser } from "#shared/api/sdk.gen"
+import type { AdminUserDetail } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 const route = useRoute()

@@ -31,7 +31,7 @@ pytestmark = pytest.mark.anyio
 @pytest.fixture
 async def user_service(session: AsyncSession) -> AsyncGenerator[UserService, None]:
     """Create UserService instance with test session."""
-    async with UserService.new(session, load=[m.User.roles, m.User.oauth_accounts, m.User.teams]) as service:
+    async with UserService.new(session, load=[m.User.roles, m.User.oauth_accounts, m.User.workspaces]) as service:
         yield service
 
 

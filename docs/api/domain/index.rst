@@ -9,7 +9,7 @@ domain
     :hidden:
 
     accounts/index
-    teams/index
+    workspaces/index
     tags/index
     web/index
     system/index

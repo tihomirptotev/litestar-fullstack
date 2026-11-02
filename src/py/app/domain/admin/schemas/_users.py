@@ -5,7 +5,7 @@ from uuid import UUID
 
 from msgspec import UNSET, UnsetType
 
-from app.domain.accounts.schemas import OauthAccount, UserRole, UserTeam
+from app.domain.accounts.schemas import OauthAccount, UserRole, UserWorkspace
 from app.lib.schema import CamelizedBaseStruct
 
 
@@ -42,7 +42,7 @@ class AdminUserDetail(CamelizedBaseStruct, kw_only=True):
     is_two_factor_enabled: bool = False
     has_password: bool = True
     roles: list[UserRole] = []
-    teams: list[UserTeam] = []
+    workspaces: list[UserWorkspace] = []
     oauth_accounts: list[OauthAccount] = []
 
 

@@ -9,10 +9,10 @@ from advanced_alchemy.utils.fixtures import open_fixture_async
 from litestar.testing import AsyncTestClient
 
 from app import config
-from app.db.models import EmailVerificationToken, PasswordResetToken, Team, TeamInvitation, User
+from app.db.models import EmailVerificationToken, PasswordResetToken, Workspace, WorkspaceInvitation, User
 from app.domain.accounts.guards import create_access_token
 from app.domain.accounts.services import RoleService, UserService
-from app.domain.teams.services import TeamService
+from app.domain.workspaces.services import WorkspaceService
 from app.lib.settings import get_settings
 from tests.utils.events import wait_for_events
 
@@ -30,7 +30,7 @@ pytestmark = pytest.mark.anyio
 async def seeded_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     raw_users: list[User | dict[str, Any]],
-    raw_teams: list[Team | dict[str, Any]],
+    raw_workspaces: list[Workspace | dict[str, Any]],
     db_cleanup: None,
 ) -> AsyncGenerator[None, None]:
     """Populate test database with fixtures when explicitly requested.
@@ -38,7 +38,7 @@ async def seeded_db(
     Args:
         sessionmaker: The SQLAlchemy sessionmaker factory.
         raw_users: Test users to add to the database
-        raw_teams: Test teams to add to the database
+        raw_workspaces: Test workspaces to add to the database
         db_cleanup: Per-test cleanup dependency to ensure isolation.
 
     """
@@ -50,12 +50,12 @@ async def seeded_db(
         for obj in fixture:
             _ = await service.repository.get_or_upsert(match_fields="name", upsert=True, **obj)
         await service.repository.session.commit()
-    async with UserService.new(sessionmaker(), load=[User.teams]) as users_service:
+    async with UserService.new(sessionmaker(), load=[User.workspaces]) as users_service:
         await users_service.create_many(raw_users, auto_commit=True)
-    async with TeamService.new(sessionmaker(), load=[Team.members, Team.tags]) as teams_services:
-        for obj in raw_teams:
-            await teams_services.create(obj)
-        await teams_services.repository.session.commit()
+    async with WorkspaceService.new(sessionmaker(), load=[Workspace.members, Workspace.tags]) as workspaces_services:
+        for obj in raw_workspaces:
+            await workspaces_services.create(obj)
+        await workspaces_services.repository.session.commit()
 
     yield
 
@@ -318,50 +318,50 @@ async def fx_test_verification_token(
     return token
 
 
-@pytest.fixture(name="test_team")
-async def fx_test_team(
+@pytest.fixture(name="test_workspace")
+async def fx_test_workspace(
     session: AsyncSession,
     test_user: User,
     _patch_db: None,
-) -> Team:
-    """Create a test team with test_user as owner."""
-    from app.db.models import TeamMember, TeamRoles
+) -> Workspace:
+    """Create a test workspace with test_user as owner."""
+    from app.db.models import WorkspaceMember, WorkspaceRoles
 
-    team = Team(
-        name="Auth Test Team",
-        slug="auth-test-team",
-        description="Test team for authentication tests",
+    workspace = Workspace(
+        name="Auth Test Workspace",
+        slug="auth-test-workspace",
+        description="Test workspace for authentication tests",
         is_active=True,
     )
-    session.add(team)
+    session.add(workspace)
     await session.flush()
 
     # Add test_user as owner
-    membership = TeamMember(
-        team_id=team.id,
+    membership = WorkspaceMember(
+        workspace_id=workspace.id,
         user_id=test_user.id,
-        role=TeamRoles.ADMIN,
+        role=WorkspaceRoles.ADMIN,
         is_owner=True,
     )
     session.add(membership)
     await session.commit()
-    await session.refresh(team, ["members"])
-    return team
+    await session.refresh(workspace, ["members"])
+    return workspace
 
 
-@pytest.fixture(name="test_team_member")
-async def fx_test_team_member(
+@pytest.fixture(name="test_workspace_member")
+async def fx_test_workspace_member(
     session: AsyncSession,
-    test_team: Team,
+    test_workspace: Workspace,
     _patch_db: None,
 ) -> User:
-    """Create another user who is a member of test_team."""
-    from app.db.models import TeamMember, TeamRoles
+    """Create another user who is a member of test_workspace."""
+    from app.db.models import WorkspaceMember, WorkspaceRoles
     from app.lib.crypt import get_password_hash
 
     user = User(
-        email="teammember@example.com",
-        name="Team Member User",
+        email="workspacemember@example.com",
+        name="Workspace Member User",
         hashed_password=await get_password_hash("TestPassword123!"),
         is_active=True,
         is_verified=True,
@@ -370,10 +370,10 @@ async def fx_test_team_member(
     session.add(user)
     await session.flush()
 
-    membership = TeamMember(
-        team_id=test_team.id,
+    membership = WorkspaceMember(
+        workspace_id=test_workspace.id,
         user_id=user.id,
-        role=TeamRoles.MEMBER,
+        role=WorkspaceRoles.MEMBER,
         is_owner=False,
     )
     session.add(membership)
@@ -382,20 +382,20 @@ async def fx_test_team_member(
     return user
 
 
-@pytest.fixture(name="test_team_invitation")
-async def fx_test_team_invitation(
+@pytest.fixture(name="test_workspace_invitation")
+async def fx_test_workspace_invitation(
     session: AsyncSession,
-    test_team: Team,
+    test_workspace: Workspace,
     test_user: User,
     _patch_db: None,
-) -> TeamInvitation:
-    """Create a team invitation for testing."""
-    from app.db.models import TeamRoles
+) -> WorkspaceInvitation:
+    """Create a workspace invitation for testing."""
+    from app.db.models import WorkspaceRoles
 
-    invitation = TeamInvitation(
-        team_id=test_team.id,
+    invitation = WorkspaceInvitation(
+        workspace_id=test_workspace.id,
         email="invited.user@example.com",
-        role=TeamRoles.MEMBER,
+        role=WorkspaceRoles.MEMBER,
         is_accepted=False,
         invited_by_id=test_user.id,
         invited_by_email=test_user.email,

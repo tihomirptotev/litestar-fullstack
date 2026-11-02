@@ -5,28 +5,28 @@ from uuid import UUID
 
 import msgspec
 
-from app.db.models._team_roles import TeamRoles
+from app.db.models._workspace_roles import WorkspaceRoles
 from app.lib.schema import CamelizedBaseStruct
 from app.lib.validation import validate_email, validate_name, validate_password, validate_phone, validate_username
 
 
-class UserTeam(CamelizedBaseStruct):
-    """Holds team details for a user.
+class UserWorkspace(CamelizedBaseStruct):
+    """Holds workspace details for a user.
 
-    This is nested in the User Model for 'team'
+    This is nested in the User Model for 'workspace'
     """
 
-    team_id: UUID
-    team_name: str
+    workspace_id: UUID
+    workspace_name: str
     is_owner: bool = False
-    role: TeamRoles | None = None
+    role: WorkspaceRoles | None = None
 
     def __post_init__(self) -> None:
         """Set default role if not provided."""
         if self.role is None:
-            from app.db.models._team_roles import TeamRoles
+            from app.db.models._workspace_roles import WorkspaceRoles
 
-            self.role = TeamRoles.MEMBER
+            self.role = WorkspaceRoles.MEMBER
 
 
 class UserRole(CamelizedBaseStruct):
@@ -68,7 +68,7 @@ class User(CamelizedBaseStruct):
     is_verified: bool = False
     is_two_factor_enabled: bool = False
     has_password: bool = False
-    teams: list[UserTeam] = []
+    workspaces: list[UserWorkspace] = []
     roles: list[UserRole] = []
     oauth_accounts: list[OauthAccount] = []
     avatar_url: str | None = None

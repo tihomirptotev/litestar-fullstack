@@ -28,7 +28,7 @@ class TagController(Controller):
     dependencies = create_service_dependencies(
         TagService,
         key="tags_service",
-        load=[selectinload(m.Tag.teams)],
+        load=[selectinload(m.Tag.workspaces)],
         filters={
             "id_filter": UUID,
             "search": "name",

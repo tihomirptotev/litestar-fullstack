@@ -29,7 +29,7 @@ It contains most of the boilerplate required for a production web API with featu
 - Frontend integrated with Vite in SPA mode and React Email templates compiled to static HTML
 - JWT auth with refresh tokens, MFA, OAuth, and admin surfaces
 - Multi-stage Docker build using a minimal Python 3.13 runtime image (including a distroless variant)
-- Team and role management with service/repository patterns and Advanced Alchemy filters
+- Workspace and role management with service/repository patterns and Advanced Alchemy filters
 
 Take what you need and adapt it to your own projects
 

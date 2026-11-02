@@ -44,7 +44,7 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             action: The action performed (e.g., 'user.created', 'login.failed')
             actor_id: ID of the user performing the action
             actor_email: Email of the actor
-            target_type: Type of target entity (e.g., 'user', 'team')
+            target_type: Type of target entity (e.g., 'user', 'workspace')
             target_id: ID of target entity
             target_label: Human-readable label for target
             details: Additional context as JSON
@@ -150,53 +150,53 @@ class AuditLogService(service.SQLAlchemyAsyncRepositoryService[m.AuditLog]):
             request=request,
         )
 
-    async def log_admin_team_update(
+    async def log_admin_workspace_update(
         self,
         *,
         actor_id: UUID,
         actor_email: str | None,
-        team_id: UUID,
-        team_name: str,
+        workspace_id: UUID,
+        workspace_name: str,
         changes: list[str],
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team update event.
+        """Log an admin workspace update event.
 
         Returns:
             The created audit log entry.
         """
         return await self.log_action(
-            action="admin.team.update",
+            action="admin.workspace.update",
             actor_id=actor_id,
             actor_email=actor_email,
-            target_type="team",
-            target_id=str(team_id),
-            target_label=team_name,
+            target_type="workspace",
+            target_id=str(workspace_id),
+            target_label=workspace_name,
             details={"changes": changes},
             request=request,
         )
 
-    async def log_admin_team_delete(
+    async def log_admin_workspace_delete(
         self,
         *,
         actor_id: UUID,
         actor_email: str | None,
-        team_id: UUID,
-        team_name: str,
+        workspace_id: UUID,
+        workspace_name: str,
         request: Request[Any, Any, Any] | None = None,
     ) -> m.AuditLog:
-        """Log an admin team deletion event.
+        """Log an admin workspace deletion event.
 
         Returns:
             The created audit log entry.
         """
         return await self.log_action(
-            action="admin.team.delete",
+            action="admin.workspace.delete",
             actor_id=actor_id,
             actor_email=actor_email,
-            target_type="team",
-            target_id=str(team_id),
-            target_label=team_name,
+            target_type="workspace",
+            target_id=str(workspace_id),
+            target_label=workspace_name,
             request=request,
         )
 

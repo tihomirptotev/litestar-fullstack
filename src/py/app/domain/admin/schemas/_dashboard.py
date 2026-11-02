@@ -12,7 +12,7 @@ class DashboardStats(CamelizedBaseStruct):
     total_users: int
     active_users: int
     verified_users: int
-    total_teams: int
+    total_workspaces: int
     new_users_today: int
     new_users_week: int
     events_today: int

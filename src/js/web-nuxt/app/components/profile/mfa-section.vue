@@ -3,7 +3,8 @@
  * MfaSection — Nuxt port of `components/profile/mfa-section.tsx`.
  * Multi-factor auth card: setup / disable / regenerate backup codes.
  */
-import { disableMfa, getMfaStatus, initiateDisableMfaOAuth, type MfaStatus, regenerateMfaBackupCodes } from "#shared/api/sdk.gen"
+import { disableMfa, getMfaStatus, initiateDisableMfaOAuth, regenerateMfaBackupCodes } from "#shared/api/sdk.gen"
+import type { MfaStatus } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 const auth = useAuth()

@@ -3,7 +3,8 @@
  * RecentActivity — Nuxt port of `components/admin/recent-activity.tsx`.
  * Latest audit events from `getRecentActivity`.
  */
-import { type ActivityLogEntry, getRecentActivity } from "#shared/api/sdk.gen"
+import { getRecentActivity } from "#shared/api/sdk.gen"
+import type { ActivityLogEntry } from "#shared/api/types.gen"
 
 const { data, status } = await useAsyncData<{ items: ActivityLogEntry[] }>("admin-recent-activity", async () => {
   const response = await getRecentActivity()

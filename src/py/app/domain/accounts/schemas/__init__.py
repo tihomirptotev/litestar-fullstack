@@ -34,7 +34,7 @@ from app.domain.accounts.schemas._user import (
     User,
     UserCreate,
     UserRole,
-    UserTeam,
+    UserWorkspace,
     UserUpdate,
 )
 from app.lib.schema import Message
@@ -76,7 +76,7 @@ __all__ = (
     "UserRole",
     "UserRoleAdd",
     "UserRoleRevoke",
-    "UserTeam",
+    "UserWorkspace",
     "UserUpdate",
     "ValidateResetTokenRequest",
 )

@@ -3,7 +3,8 @@
  * ConnectedAccounts — Nuxt port of `components/profile/connected-accounts.tsx`.
  * Lists linked OAuth accounts with link / unlink actions.
  */
-import { type OAuthAccountInfo, oAuthConfig, profileOAuthAccounts, profileOAuthLink, profileOAuthUnlink } from "#shared/api/sdk.gen"
+import { oAuthConfig, profileOAuthAccounts, profileOAuthLink, profileOAuthUnlink } from "#shared/api/sdk.gen"
+import type { OAuthAccountInfo } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 const toast = useToast()

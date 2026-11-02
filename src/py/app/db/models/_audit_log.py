@@ -34,16 +34,16 @@ class AuditLog(UUIDv7AuditBase):
     """Email of the actor at the time of the action (preserved even if user deleted)."""
 
     action: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    """The action performed (e.g., 'user.created', 'team.deleted', 'login.failed')."""
+    """The action performed (e.g., 'user.created', 'workspace.deleted', 'login.failed')."""
 
     target_type: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
-    """Type of entity affected (e.g., 'user', 'team', 'role')."""
+    """Type of entity affected (e.g., 'user', 'workspace', 'role')."""
 
     target_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
     """ID of the target entity (as string to support different ID types)."""
 
     target_label: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    """Human-readable label for the target (e.g., user email, team name)."""
+    """Human-readable label for the target (e.g., user email, workspace name)."""
 
     details: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     """Additional details about the action (JSON object)."""

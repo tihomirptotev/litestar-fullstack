@@ -5,11 +5,11 @@ from app.db.models._password_reset_token import PasswordResetToken
 from app.db.models._refresh_token import RefreshToken
 from app.db.models._role import Role
 from app.db.models._tag import Tag
-from app.db.models._team import Team
-from app.db.models._team_invitation import TeamInvitation
-from app.db.models._team_member import TeamMember
-from app.db.models._team_roles import TeamRoles
-from app.db.models._team_tag import team_tag
+from app.db.models._workspace import Workspace
+from app.db.models._workspace_invitation import WorkspaceInvitation
+from app.db.models._workspace_member import WorkspaceMember
+from app.db.models._workspace_roles import WorkspaceRoles
+from app.db.models._workspace_tag import workspace_tag
 from app.db.models._user import User
 from app.db.models._user_role import UserRole
 
@@ -20,12 +20,12 @@ __all__ = (
     "RefreshToken",
     "Role",
     "Tag",
-    "Team",
-    "TeamInvitation",
-    "TeamMember",
-    "TeamRoles",
+    "Workspace",
+    "WorkspaceInvitation",
+    "WorkspaceMember",
+    "WorkspaceRoles",
     "User",
     "UserOAuthAccount",
     "UserRole",
-    "team_tag",
+    "workspace_tag",
 )

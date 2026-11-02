@@ -3,7 +3,8 @@
  * MfaSetupDialog — Nuxt port of `components/mfa/mfa-setup-dialog.tsx`.
  * QR-code + secret + 6-digit confirm flow; shows backup codes on success.
  */
-import { confirmMfaSetup, initiateMfaSetup, type MfaSetup } from "#shared/api/sdk.gen"
+import { confirmMfaSetup, initiateMfaSetup } from "#shared/api/sdk.gen"
+import type { MfaSetup } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 const props = withDefaults(defineProps<{ disabled?: boolean }>(), { disabled: false })

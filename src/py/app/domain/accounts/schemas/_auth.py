@@ -20,7 +20,7 @@ class AccountRegister(CamelizedBaseStruct):
     password: str
     name: str | None = None
     username: str | None = None
-    initial_team_name: str | msgspec.UnsetType | None = msgspec.UNSET
+    initial_workspace_name: str | msgspec.UnsetType | None = msgspec.UNSET
 
     def __post_init__(self) -> None:
         """Validate fields."""

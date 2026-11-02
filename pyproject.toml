@@ -33,7 +33,7 @@ keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vi
 license = { text = "MIT" }
 name = "app"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 version = "0.3.0"
 
 [project.urls]
@@ -174,7 +174,7 @@ addopts = [
   "-v",
   "-ra",
   "-n",
-  "auto",                      # Enable xdist with auto-detected worker count
+  "auto", # Enable xdist with auto-detected worker count
 ]
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources",
@@ -198,7 +198,7 @@ markers = [
   "models: marks tests for database models",
   "endpoints: marks tests for API endpoints",
   "security: marks tests for security features",
-  "teams: marks tests related to team functionality",
+  "workspaces: marks tests related to workspace functionality",
 ]
 python_classes = ["Test*"]
 python_files = ["test_*.py", "*_test.py"]
@@ -238,32 +238,32 @@ target-version = "py311"
 [tool.ruff.lint]
 fixable = ["ALL"]
 ignore = [
-  "A003",    # flake8-builtins - class attribute {name} is shadowing a python builtin
-  "A005",    # flake8-builtins - module {name} shadows a Python standard-library module
-  "B010",    # flake8-bugbear - do not call setattr with a constant attribute value
-  "D100",    # pydocstyle - missing docstring in public module
-  "D101",    # pydocstyle - missing docstring in public class
-  "D102",    # pydocstyle - missing docstring in public method
-  "D103",    # pydocstyle - missing docstring in public function
-  "D104",    # pydocstyle - missing docstring in public package
-  "D105",    # pydocstyle - missing docstring in magic method
-  "D106",    # pydocstyle - missing docstring in public nested class
-  "D107",    # pydocstyle - missing docstring in __init__
-  "D202",    # pydocstyle - no blank lines allowed after function docstring
-  "D205",    # pydocstyle - 1 blank line required between summary line and description
-  "D415",    # pydocstyle - first line should end with a period, question mark, or exclamation point
-  "E501",    # pydocstyle line too long, handled by black
+  "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
+  "A005", # flake8-builtins - module {name} shadows a Python standard-library module
+  "B010", # flake8-bugbear - do not call setattr with a constant attribute value
+  "D100", # pydocstyle - missing docstring in public module
+  "D101", # pydocstyle - missing docstring in public class
+  "D102", # pydocstyle - missing docstring in public method
+  "D103", # pydocstyle - missing docstring in public function
+  "D104", # pydocstyle - missing docstring in public package
+  "D105", # pydocstyle - missing docstring in magic method
+  "D106", # pydocstyle - missing docstring in public nested class
+  "D107", # pydocstyle - missing docstring in __init__
+  "D202", # pydocstyle - no blank lines allowed after function docstring
+  "D205", # pydocstyle - 1 blank line required between summary line and description
+  "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
+  "E501", # pydocstyle line too long, handled by black
   "PLW2901", # pylint - for loop variable overwritten by assignment target
-  "RUF012",  # Ruff-specific rule - annotated with classvar
+  "RUF012", # Ruff-specific rule - annotated with classvar
   "ANN401",
   "FBT",
   "PLR0913", # too many arguments
   "PT",
   "TD",
-  "ARG002",  # ignore for now; investigate
-  "ARG003",  # ignore for now; investigate
+  "ARG002", # ignore for now; investigate
+  "ARG003", # ignore for now; investigate
   "PERF203", # ignore for now; investigate
-  "PD011",   # pandas
+  "PD011", # pandas
   "PLR0912",
   "ISC001",
   "COM812",
@@ -289,7 +289,18 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/py/app/db/migrations/*.py" = ['D104', 'D103', 'D205', 'D212']
 "src/py/app/db/migrations/versions/*.py" = ["ANN201", "INP001"]
 "src/py/app/db/models/*.py" = ["PLW0108", "TC003"]
-"src/py/tests/*.py" = ['D103', 'S101', 'D104', "PLR2004", "RUF029", "ARG001", "SLF001", "DOC", "ANN", "S"]
+"src/py/tests/*.py" = [
+  'D103',
+  'S101',
+  'D104',
+  "PLR2004",
+  "RUF029",
+  "ARG001",
+  "SLF001",
+  "DOC",
+  "ANN",
+  "S",
+]
 "tools/*.py" = ["INP001", "ERA001", "N999"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP001", "S603", "S404", "PLR0915"]
 

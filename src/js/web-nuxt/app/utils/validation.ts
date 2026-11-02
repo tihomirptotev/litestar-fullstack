@@ -99,7 +99,7 @@ export const registerFormSchema = z
     passwordConfirm: z.string().min(1, "Please confirm your password"),
     name: nameSchema,
     username: usernameSchema,
-    initialTeamName: z.string().max(50, "Team name must be less than 50 characters").optional(),
+    initialWorkspaceName: z.string().max(50, "Workspace name must be less than 50 characters").optional(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "Passwords do not match",
@@ -205,14 +205,14 @@ export const profileUpdateFormSchema = z.object({
 export type ProfileUpdateFormData = z.infer<typeof profileUpdateFormSchema>
 
 /**
- * Team create/update form schema.
+ * Workspace create/update form schema.
  */
-export const teamFormSchema = z.object({
-  name: z.string().min(2, "Team name must be at least 2 characters").max(50, "Team name must be less than 50 characters"),
+export const workspaceFormSchema = z.object({
+  name: z.string().min(2, "Workspace name must be at least 2 characters").max(50, "Workspace name must be less than 50 characters"),
   description: z.string().max(500, "Description must be less than 500 characters").optional(),
 })
 
-export type TeamFormData = z.infer<typeof teamFormSchema>
+export type WorkspaceFormData = z.infer<typeof workspaceFormSchema>
 
 // =============================================================================
 // Validation Helpers

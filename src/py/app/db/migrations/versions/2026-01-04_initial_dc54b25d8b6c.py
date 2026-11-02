@@ -79,7 +79,7 @@ def schema_upgrades() -> None:
     with op.batch_alter_table('tag', schema=None) as batch_op:
         batch_op.create_index('ix_tag_slug_unique', ['slug'], unique=True)
 
-    op.create_table('team',
+    op.create_table('workspace',
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(length=500), nullable=True),
@@ -88,12 +88,12 @@ def schema_upgrades() -> None:
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team')),
-    sa.UniqueConstraint('slug', name='uq_team_slug')
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_workspace')),
+    sa.UniqueConstraint('slug', name='uq_workspace_slug')
     )
-    with op.batch_alter_table('team', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_team_name'), ['name'], unique=False)
-        batch_op.create_index('ix_team_slug_unique', ['slug'], unique=True)
+    with op.batch_alter_table('workspace', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_workspace_name'), ['name'], unique=False)
+        batch_op.create_index('ix_workspace_slug_unique', ['slug'], unique=True)
 
     op.create_table('user_account',
     sa.Column('id', sa.GUID(length=16), nullable=False),
@@ -207,9 +207,9 @@ def schema_upgrades() -> None:
         batch_op.create_index(batch_op.f('ix_refresh_token_token_hash'), ['token_hash'], unique=True)
         batch_op.create_index(batch_op.f('ix_refresh_token_user_id'), ['user_id'], unique=False)
 
-    op.create_table('team_invitation',
+    op.create_table('workspace_invitation',
     sa.Column('id', sa.GUID(length=16), nullable=False),
-    sa.Column('team_id', sa.GUID(length=16), nullable=False),
+    sa.Column('workspace_id', sa.GUID(length=16), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('role', sa.String(length=50), nullable=False),
     sa.Column('is_accepted', sa.Boolean(), nullable=False),
@@ -218,36 +218,36 @@ def schema_upgrades() -> None:
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['invited_by_id'], ['user_account.id'], name=op.f('fk_team_invitation_invited_by_id_user_account'), ondelete='set null'),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_invitation_team_id_team'), ondelete='cascade'),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team_invitation'))
+    sa.ForeignKeyConstraint(['invited_by_id'], ['user_account.id'], name=op.f('fk_workspace_invitation_invited_by_id_user_account'), ondelete='set null'),
+    sa.ForeignKeyConstraint(['workspace_id'], ['workspace.id'], name=op.f('fk_workspace_invitation_workspace_id_workspace'), ondelete='cascade'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_workspace_invitation'))
     )
-    with op.batch_alter_table('team_invitation', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_team_invitation_email'), ['email'], unique=False)
+    with op.batch_alter_table('workspace_invitation', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_workspace_invitation_email'), ['email'], unique=False)
 
-    op.create_table('team_member',
+    op.create_table('workspace_member',
     sa.Column('id', sa.GUID(length=16), nullable=False),
     sa.Column('user_id', sa.GUID(length=16), nullable=False),
-    sa.Column('team_id', sa.GUID(length=16), nullable=False),
+    sa.Column('workspace_id', sa.GUID(length=16), nullable=False),
     sa.Column('role', sa.String(length=50), nullable=False),
     sa.Column('is_owner', sa.Boolean(), nullable=False),
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_member_team_id_team'), ondelete='cascade'),
-    sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_team_member_user_id_user_account'), ondelete='cascade'),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_team_member')),
-    sa.UniqueConstraint('user_id', 'team_id', name=op.f('uq_team_member_user_id'))
+    sa.ForeignKeyConstraint(['workspace_id'], ['workspace.id'], name=op.f('fk_workspace_member_workspace_id_workspace'), ondelete='cascade'),
+    sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], name=op.f('fk_workspace_member_user_id_user_account'), ondelete='cascade'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_workspace_member')),
+    sa.UniqueConstraint('user_id', 'workspace_id', name=op.f('uq_workspace_member_user_id'))
     )
-    with op.batch_alter_table('team_member', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_team_member_role'), ['role'], unique=False)
+    with op.batch_alter_table('workspace_member', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_workspace_member_role'), ['role'], unique=False)
 
-    op.create_table('team_tag',
-    sa.Column('team_id', sa.UUID(), nullable=False),
+    op.create_table('workspace_tag',
+    sa.Column('workspace_id', sa.UUID(), nullable=False),
     sa.Column('tag_id', sa.UUID(), nullable=False),
-    sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], name=op.f('fk_team_tag_tag_id_tag'), ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], name=op.f('fk_team_tag_team_id_team'), ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('team_id', 'tag_id', name=op.f('pk_team_tag'))
+    sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], name=op.f('fk_workspace_tag_tag_id_tag'), ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['workspace_id'], ['workspace.id'], name=op.f('fk_workspace_tag_workspace_id_workspace'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('workspace_id', 'tag_id', name=op.f('pk_workspace_tag'))
     )
     op.create_table('user_account_oauth',
     sa.Column('id', sa.GUID(length=16), nullable=False),
@@ -301,15 +301,15 @@ def schema_downgrades() -> None:
         batch_op.drop_index('ix_oauth_provider_oauth_id')
 
     op.drop_table('user_account_oauth')
-    op.drop_table('team_tag')
-    with op.batch_alter_table('team_member', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_team_member_role'))
+    op.drop_table('workspace_tag')
+    with op.batch_alter_table('workspace_member', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_workspace_member_role'))
 
-    op.drop_table('team_member')
-    with op.batch_alter_table('team_invitation', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_team_invitation_email'))
+    op.drop_table('workspace_member')
+    with op.batch_alter_table('workspace_invitation', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_workspace_invitation_email'))
 
-    op.drop_table('team_invitation')
+    op.drop_table('workspace_invitation')
     with op.batch_alter_table('refresh_token', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_refresh_token_user_id'))
         batch_op.drop_index(batch_op.f('ix_refresh_token_token_hash'))
@@ -338,11 +338,11 @@ def schema_downgrades() -> None:
         batch_op.drop_index(batch_op.f('ix_user_account_email'))
 
     op.drop_table('user_account')
-    with op.batch_alter_table('team', schema=None) as batch_op:
-        batch_op.drop_index('ix_team_slug_unique')
-        batch_op.drop_index(batch_op.f('ix_team_name'))
+    with op.batch_alter_table('workspace', schema=None) as batch_op:
+        batch_op.drop_index('ix_workspace_slug_unique')
+        batch_op.drop_index(batch_op.f('ix_workspace_name'))
 
-    op.drop_table('team')
+    op.drop_table('workspace')
     with op.batch_alter_table('tag', schema=None) as batch_op:
         batch_op.drop_index('ix_tag_slug_unique')
 

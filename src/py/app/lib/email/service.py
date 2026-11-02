@@ -254,36 +254,36 @@ class AppEmailService:
             html_content=html_content,
         )
 
-    async def send_team_invitation_email(
+    async def send_workspace_invitation_email(
         self,
         invitee_email: str,
         inviter_name: str,
-        team_name: str,
+        workspace_name: str,
         invitation_url: str,
     ) -> bool:
-        """Send team invitation email.
+        """Send workspace invitation email.
 
         Args:
             invitee_email: Email address to send invitation to.
             inviter_name: Name of person sending invitation.
-            team_name: Name of the team.
+            workspace_name: Name of the workspace.
             invitation_url: URL to accept the invitation.
 
         Returns:
             True if email was sent successfully.
         """
         html_content = self._render_template(
-            "team-invitation.html",
+            "workspace-invitation.html",
             {
                 "INVITER_NAME": inviter_name,
-                "TEAM_NAME": team_name,
+                "WORKSPACE_NAME": workspace_name,
                 "INVITATION_URL": invitation_url,
             },
         )
 
         return await self.send_email(
             to_email=invitee_email,
-            subject=f"{inviter_name} invited you to join {team_name} on {self.app_name}",
+            subject=f"{inviter_name} invited you to join {workspace_name} on {self.app_name}",
             html_content=html_content,
         )
 

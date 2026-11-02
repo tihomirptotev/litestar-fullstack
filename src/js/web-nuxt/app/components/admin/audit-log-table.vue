@@ -4,7 +4,8 @@
  * Paginated audit log with filter inputs for search / action / actor /
  * target / date range.
  */
-import { type AuditLogEntry, adminListAuditLogs } from "#shared/api/sdk.gen"
+import { adminListAuditLogs } from "#shared/api/sdk.gen"
+import type { AuditLogEntry } from "#shared/api/types.gen"
 
 const PAGE_SIZE = 50
 

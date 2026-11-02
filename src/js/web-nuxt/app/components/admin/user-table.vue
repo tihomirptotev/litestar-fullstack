@@ -3,7 +3,8 @@
  * UserTable — Nuxt port of `components/admin/user-table.tsx`.
  * Paginated admin user list with search; link to per-user detail.
  */
-import { type AdminUserSummary, adminListUsers } from "#shared/api/sdk.gen"
+import { adminListUsers } from "#shared/api/sdk.gen"
+import type { AdminUserSummary } from "#shared/api/types.gen"
 
 const PAGE_SIZE = 25
 

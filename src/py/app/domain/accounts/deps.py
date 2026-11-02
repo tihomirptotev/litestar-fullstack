@@ -21,8 +21,8 @@ provide_users_service = create_service_provider(
     load=[
         selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
         selectinload(m.User.oauth_accounts),
-        selectinload(m.User.teams).options(
-            joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
+        selectinload(m.User.workspaces).options(
+            joinedload(m.WorkspaceMember.workspace, innerjoin=True).options(load_only(m.Workspace.name)),
         ),
     ],
     uniquify=True,

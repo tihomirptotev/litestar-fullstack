@@ -1,64 +1,64 @@
 <script setup lang="ts">
 /**
  * App sidebar — Nuxt port of the React app's `app-sidebar.tsx`,
- * `nav-main.tsx`, `nav-projects.tsx`, `team-switcher.tsx` and `nav-user.tsx`
+ * `nav-main.tsx`, `nav-projects.tsx`, `workspace-switcher.tsx` and `nav-user.tsx`
  * collapsed into one component using Nuxt UI's `UDashboardSidebar`.
  */
 import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui"
 import { getAccessToken } from "#shared/api/config"
-import { listTeams } from "#shared/api/sdk.gen"
-import type { Team, User } from "#shared/api/types.gen"
+import { listWorkspaces } from "#shared/api/sdk.gen"
+import type { Workspace, User } from "#shared/api/types.gen"
 import { unwrapAs } from "~/composables/api"
 
 const auth = useAuth()
 const route = useRoute()
 const toast = useToast()
 
-// --- Teams fetch + store sync (mirrors the React useQuery + useEffect sync) ---
-const teamsData = ref<Team[]>([])
-const teamsLoading = ref(false)
+// --- Workspaces fetch + store sync (mirrors the React useQuery + useEffect sync) ---
+const workspacesData = ref<Workspace[]>([])
+const workspacesLoading = ref(false)
 
-const loadTeams = async () => {
+const loadWorkspaces = async () => {
   if (!getAccessToken() && !auth.isAuthenticated.value) {
     return
   }
-  teamsLoading.value = true
+  workspacesLoading.value = true
   try {
-    const data = await unwrapAs<unknown, unknown, { items?: Team[] }>(listTeams())
-    teamsData.value = data.items ?? []
-    auth.setTeams(teamsData.value)
+    const data = await unwrapAs<unknown, unknown, { items?: Workspace[] }>(listWorkspaces())
+    workspacesData.value = data.items ?? []
+    auth.setWorkspaces(workspacesData.value)
   } catch {
-    // Non-fatal — sidebar falls back to the store's team list.
+    // Non-fatal — sidebar falls back to the store's workspace list.
   } finally {
-    teamsLoading.value = false
+    workspacesLoading.value = false
   }
 }
 
 onMounted(() => {
-  loadTeams()
+  loadWorkspaces()
 })
 
 watch(
   () => auth.isAuthenticated.value,
   (authenticated) => {
     if (authenticated) {
-      loadTeams()
+      loadWorkspaces()
     }
   },
 )
 
-// Keep local list in sync when teams change elsewhere (e.g. create team page).
+// Keep local list in sync when workspaces change elsewhere (e.g. create workspace page).
 watch(
-  () => auth.teams.value.map((team: Team) => team.id).join("|"),
+  () => auth.workspaces.value.map((workspace: Workspace) => workspace.id).join("|"),
   (storeIds) => {
-    const localIds = teamsData.value.map((team) => team.id).join("|")
+    const localIds = workspacesData.value.map((workspace) => workspace.id).join("|")
     if (storeIds !== localIds) {
-      teamsData.value = auth.teams.value
+      workspacesData.value = auth.workspaces.value
     }
   },
 )
 
-const teamOptions = computed<Team[]>(() => (teamsData.value.length > 0 ? teamsData.value : auth.teams.value))
+const workspaceOptions = computed<Workspace[]>(() => (workspacesData.value.length > 0 ? workspacesData.value : auth.workspaces.value))
 
 // --- Navigation items ---
 const navItems = computed<NavigationMenuItem[]>(() => {
@@ -69,12 +69,12 @@ const navItems = computed<NavigationMenuItem[]>(() => {
       to: "/home",
     },
     {
-      label: "Teams",
+      label: "Workspaces",
       icon: "i-lucide-users",
-      to: "/teams",
+      to: "/workspaces",
       children: [
-        { label: "All teams", to: "/teams" },
-        { label: "Create new", to: "/teams/new" },
+        { label: "All workspaces", to: "/workspaces" },
+        { label: "Create new", to: "/workspaces/new" },
       ],
     },
   ]
@@ -88,24 +88,24 @@ const navItems = computed<NavigationMenuItem[]>(() => {
   return items
 })
 
-const teamLinks = computed<NavigationMenuItem[]>(() =>
-  teamOptions.value.map((team: Team) => ({
-    label: team.name,
+const workspaceLinks = computed<NavigationMenuItem[]>(() =>
+  workspaceOptions.value.map((workspace: Workspace) => ({
+    label: workspace.name,
     icon: "i-lucide-users",
-    to: `/teams/${team.id}`,
+    to: `/workspaces/${workspace.id}`,
   })),
 )
 
-// --- Team switcher ---
-const activeTeam = computed<Team | null>(() => {
-  const { currentTeam } = auth
-  if (currentTeam.value) {
-    return teamOptions.value.find((team) => team.id === currentTeam.value?.id) ?? teamOptions.value[0] ?? null
+// --- Workspace switcher ---
+const activeWorkspace = computed<Workspace | null>(() => {
+  const { currentWorkspace } = auth
+  if (currentWorkspace.value) {
+    return workspaceOptions.value.find((workspace) => workspace.id === currentWorkspace.value?.id) ?? workspaceOptions.value[0] ?? null
   }
-  return teamOptions.value[0] ?? null
+  return workspaceOptions.value[0] ?? null
 })
 
-const teamInitials = (name: string) =>
+const workspaceInitials = (name: string) =>
   name
     .split(" ")
     .map((part) => part[0])
@@ -113,8 +113,8 @@ const teamInitials = (name: string) =>
     .slice(0, 2)
     .toUpperCase()
 
-const onTeamSelect = (team: Team) => {
-  auth.setCurrentTeam(team)
+const onWorkspaceSelect = (workspace: Workspace) => {
+  auth.setCurrentWorkspace(workspace)
 }
 
 // --- User menu ---
@@ -175,21 +175,21 @@ void route
     collapsible="icon"
     :ui="{ footer: 'border-t border-default' }"
   >
-    <!-- Team switcher -->
+    <!-- Workspace switcher -->
     <template #header>
       <UDropdownMenu
-        v-if="activeTeam"
+        v-if="activeWorkspace"
         :items="[
-          teamOptions.map((team: Team) => ({
-            label: team.name,
+          workspaceOptions.map((workspace: Workspace) => ({
+            label: workspace.name,
             icon: 'i-lucide-users',
-            onSelect: () => onTeamSelect(team),
+            onSelect: () => onWorkspaceSelect(workspace),
           })),
           [
             {
-              label: 'Add team',
+              label: 'Add workspace',
               icon: 'i-lucide-plus',
-              to: '/teams/new',
+              to: '/workspaces/new',
             },
           ],
         ]"
@@ -203,11 +203,11 @@ void route
           :ui="{ trailingIcon: 'text-dimmed' }"
         >
           <span class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-xs font-semibold text-primary">
-            {{ teamInitials(activeTeam.name) }}
+            {{ workspaceInitials(activeWorkspace.name) }}
           </span>
           <span class="grid flex-1 text-left leading-tight">
-            <span class="truncate font-medium">{{ activeTeam.name }}</span>
-            <span class="truncate text-xs">{{ activeTeam.slug }}</span>
+            <span class="truncate font-medium">{{ activeWorkspace.name }}</span>
+            <span class="truncate text-xs">{{ activeWorkspace.slug }}</span>
           </span>
           <UIcon
             name="i-lucide-chevrons-up-down"
@@ -217,7 +217,7 @@ void route
       </UDropdownMenu>
     </template>
 
-    <!-- Main nav + team links -->
+    <!-- Main nav + workspace links -->
     <template #default>
       <UNavigationMenu
         orientation="vertical"
@@ -225,18 +225,18 @@ void route
         :ui="{ link: 'text-highlighted' }"
       />
 
-      <USeparator v-if="teamLinks.length > 0" />
+      <USeparator v-if="workspaceLinks.length > 0" />
 
       <div
-        v-if="teamLinks.length > 0"
+        v-if="workspaceLinks.length > 0"
         class="min-h-0 flex-1 overflow-y-auto"
       >
         <p class="px-2.5 py-1.5 text-xs font-medium text-dimmed">
-          Teams
+          Workspaces
         </p>
         <UNavigationMenu
           orientation="vertical"
-          :items="teamLinks"
+          :items="workspaceLinks"
           :ui="{ link: 'text-muted' }"
         />
       </div>

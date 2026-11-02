@@ -1,7 +1,7 @@
 import { computed } from "vue"
 import { setAccessToken } from "#shared/api/config"
 import { accountLogin, accountLogout, accountProfile } from "#shared/api/sdk.gen"
-import type { Team, User } from "#shared/api/types.gen"
+import type { Workspace, User } from "#shared/api/types.gen"
 import { apiErrorMessage, unwrapAs } from "./api"
 
 /**
@@ -23,7 +23,7 @@ const useToaster = () => {
  * - `completeMfaLogin` finishes MFA flows with the MFA-issued access token
  * - `logout` clears token + state
  * - `checkAuth` re-verifies the session via the profile endpoint
- * - team state keeps `currentTeam` only while it remains in `teams`
+ * - workspace state keeps `currentWorkspace` only while it remains in `workspaces`
  *
  * SPA mode: state lives in `useState` (app singleton) and the access token in
  * localStorage, mirroring the React app. When SSR is adopted, persist via a
@@ -32,15 +32,15 @@ const useToaster = () => {
 export const useAuth = () => {
   const toast = useToaster()
   const userState = useState<User | null>("auth:user", () => null)
-  const currentTeamState = useState<Team | null>("auth:currentTeam", () => null)
-  const teamsState = useState<Team[]>("auth:teams", () => [])
+  const currentWorkspaceInternalState = useState<Workspace | null>("auth:currentWorkspace", () => null)
+  const workspacesState = useState<Workspace[]>("auth:workspaces", () => [])
   const isLoadingState = useState<boolean>("auth:isLoading", () => false)
   const isAuthenticatedState = useState<boolean>("auth:isAuthenticated", () => false)
 
-  const patch = (values: Partial<{ user: User | null; currentTeam: null | Team; teams: Team[]; isLoading: boolean; isAuthenticated: boolean }>) => {
+  const patch = (values: Partial<{ user: User | null; currentWorkspace: null | Workspace; workspaces: Workspace[]; isLoading: boolean; isAuthenticated: boolean }>) => {
     if ("user" in values) userState.value = values.user
-    if ("currentTeam" in values) currentTeamState.value = values.currentTeam
-    if ("teams" in values) teamsState.value = values.teams
+    if ("currentWorkspace" in values) currentWorkspaceInternalState.value = values.currentWorkspace
+    if ("workspaces" in values) workspacesState.value = values.workspaces
     if ("isLoading" in values) isLoadingState.value = values.isLoading
     if ("isAuthenticated" in values) isAuthenticatedState.value = values.isAuthenticated
   }
@@ -52,7 +52,7 @@ export const useAuth = () => {
 
       if (loginData?.mfaRequired) {
         setAccessToken(null)
-        patch({ user: null, currentTeam: null, isAuthenticated: false })
+        patch({ user: null, currentWorkspace: null, isAuthenticated: false })
         return { mfaRequired: true }
       }
 
@@ -69,7 +69,7 @@ export const useAuth = () => {
       return { mfaRequired: false }
     } catch (error) {
       setAccessToken(null)
-      patch({ user: null, currentTeam: null, isAuthenticated: false })
+      patch({ user: null, currentWorkspace: null, isAuthenticated: false })
       toast.error(apiErrorMessage(error) || "Login failed")
       return { mfaRequired: false }
     } finally {
@@ -85,7 +85,7 @@ export const useAuth = () => {
       patch({ user: profile, isAuthenticated: true })
     } catch (error) {
       setAccessToken(null)
-      patch({ user: null, currentTeam: null, isAuthenticated: false })
+      patch({ user: null, currentWorkspace: null, isAuthenticated: false })
       toast.error("MFA verification failed", { description: apiErrorMessage(error) || "Unable to complete login" })
     } finally {
       patch({ isLoading: false })
@@ -98,7 +98,7 @@ export const useAuth = () => {
       await accountLogout()
     } finally {
       setAccessToken(null)
-      patch({ user: null, currentTeam: null, isAuthenticated: false, isLoading: false })
+      patch({ user: null, currentWorkspace: null, isAuthenticated: false, isLoading: false })
     }
   }
 
@@ -109,31 +109,31 @@ export const useAuth = () => {
       patch({ user: profile, isAuthenticated: true })
     } catch {
       setAccessToken(null)
-      patch({ user: null, currentTeam: null, isAuthenticated: false })
+      patch({ user: null, currentWorkspace: null, isAuthenticated: false })
     } finally {
       patch({ isLoading: false })
     }
   }
 
-  const setCurrentTeam = (team: Team) => patch({ currentTeam: team })
+  const setCurrentWorkspace = (workspace: Workspace) => patch({ currentWorkspace: workspace })
 
-  const setTeams = (newTeams: Team[]) => {
-    const current = currentTeamState.value
-    const nextCurrent = current && newTeams.some((team) => team.id === current.id) ? current : (newTeams[0] ?? null)
-    patch({ teams: newTeams, currentTeam: nextCurrent })
+  const setWorkspaces = (newWorkspaces: Workspace[]) => {
+    const current = currentWorkspaceInternalState.value
+    const nextCurrent = current && newWorkspaces.some((workspace) => workspace.id === current.id) ? current : (newWorkspaces[0] ?? null)
+    patch({ workspaces: newWorkspaces, currentWorkspace: nextCurrent })
   }
 
   return {
     user: computed(() => userState.value),
-    currentTeam: computed(() => currentTeamState.value),
-    teams: computed(() => teamsState.value),
+    currentWorkspace: computed(() => currentWorkspaceInternalState.value),
+    workspaces: computed(() => workspacesState.value),
     isLoading: computed(() => isLoadingState.value),
     isAuthenticated: computed(() => isAuthenticatedState.value),
     login,
     completeMfaLogin,
     logout,
     checkAuth,
-    setCurrentTeam,
-    setTeams,
+    setCurrentWorkspace,
+    setWorkspaces,
   }
 }

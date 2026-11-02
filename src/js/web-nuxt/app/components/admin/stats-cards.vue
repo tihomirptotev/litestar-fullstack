@@ -3,7 +3,8 @@
  * StatsCards — Nuxt port of `components/admin/stats-cards.tsx`.
  * Dashboard metric cards from `getDashboardStats`.
  */
-import { type DashboardStats, getDashboardStats } from "#shared/api/sdk.gen"
+import { getDashboardStats } from "#shared/api/sdk.gen"
+import type { DashboardStats } from "#shared/api/types.gen"
 
 const { data, status } = await useAsyncData<DashboardStats | null>("admin-dashboard-stats", async () => {
   const response = await getDashboardStats()
@@ -22,7 +23,7 @@ const cardMeta = computed(() => {
     { label: "Verified users", value: stats.value.verifiedUsers, icon: "i-lucide-mail-check" },
     { label: "New users (today)", value: stats.value.newUsersToday, icon: "i-lucide-user-plus" },
     { label: "New users (week)", value: stats.value.newUsersWeek, icon: "i-lucide-users" },
-    { label: "Teams", value: stats.value.totalTeams, icon: "i-lucide-users-round" },
+    { label: "Workspaces", value: stats.value.totalWorkspaces, icon: "i-lucide-users-round" },
     { label: "Events (today)", value: stats.value.eventsToday, icon: "i-lucide-activity" },
   ]
 })

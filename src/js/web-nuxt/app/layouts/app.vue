@@ -17,11 +17,11 @@ const route = useRoute()
 const title = computed(() => {
   const path = route.path
   if (path === "/home") return "Overview"
-  if (path === "/teams/new") return "Create team"
-  if (path === "/teams") return "Workspace"
+  if (path === "/workspaces/new") return "Create workspace"
+  if (path === "/workspaces") return "Workspace"
   if (path === "/profile") return "Account"
   if (path.startsWith("/admin")) return "Operations"
-  if (path.startsWith("/teams/")) return "Workspace"
+  if (path.startsWith("/workspaces/")) return "Workspace"
   return "Home"
 })
 </script>
@@ -39,14 +39,14 @@ const title = computed(() => {
 
           <template #right>
             <UBadge
-              v-if="auth.currentTeam.value && route.path !== '/teams/new'"
+              v-if="auth.currentWorkspace.value && route.path !== '/workspaces/new'"
               color="neutral"
               variant="subtle"
               size="sm"
               class="gap-1.5"
             >
               <UIcon name="i-lucide-users" />
-              <span class="text-xs">{{ auth.currentTeam.value.name }}</span>
+              <span class="text-xs">{{ auth.currentWorkspace.value.name }}</span>
             </UBadge>
           </template>
         </UDashboardNavbar>

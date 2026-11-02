@@ -1,20 +1,21 @@
 <script setup lang="ts">
 /**
  * Home dashboard — Nuxt port of the React app's `routes/_app/home.tsx`.
- * Welcome header + your-teams card + quick-actions sidebar.
+ * Welcome header + your-workspaces card + quick-actions sidebar.
  */
-import { listTeams, type Team } from "#shared/api/sdk.gen"
+import { listWorkspaces } from "#shared/api/sdk.gen"
+import type { Workspace } from "#shared/api/types.gen"
 import { useAuth } from "~/composables/useAuth"
 
 definePageMeta({ layout: "app" })
 
 const auth = useAuth()
 
-const { data: teamsData } = await useAsyncData<Team[]>("teams", async () => {
-  const response = await listTeams()
+const { data: workspacesData } = await useAsyncData<Workspace[]>("workspaces", async () => {
+  const response = await listWorkspaces()
   return response.data?.items ?? []
 })
-const teams = computed(() => teamsData.value ?? [])
+const workspaces = computed(() => workspacesData.value ?? [])
 
 const displayName = computed(() => auth.user.value?.name || auth.user.value?.email?.split("@")[0] || "there")
 
@@ -27,65 +28,65 @@ useHead({ title: "Home — Litestar Fullstack" })
       <PageHeader
         eyebrow="Dashboard"
         :title="`Welcome back, ${displayName}`"
-        description="Manage your teams and explore the platform."
+        description="Manage your workspaces and explore the platform."
       >
         <template #actions>
           <UButton
             size="sm"
             icon="i-lucide-plus"
-            to="/teams/new"
+            to="/workspaces/new"
           >
-            Create team
+            Create workspace
           </UButton>
         </template>
       </PageHeader>
 
       <div class="flex gap-6">
-        <!-- Your Teams -->
+        <!-- Your Workspaces -->
         <UCard class="min-w-0 flex-1 transition-all hover:shadow-md">
           <template #header>
             <div class="space-y-1">
-              <h2 class="text-lg font-semibold">Your Teams</h2>
-              <p class="text-sm text-muted-foreground">Teams you're a member of</p>
+              <h2 class="text-lg font-semibold">Your Workspaces</h2>
+              <p class="text-sm text-muted-foreground">Workspaces you're a member of</p>
             </div>
           </template>
           <div>
             <div
-              v-if="teams.length > 0"
+              v-if="workspaces.length > 0"
               class="space-y-2"
             >
               <NuxtLink
-                v-for="team in teams.slice(0, 3)"
-                :key="team.id"
-                :to="`/teams/${team.id}`"
+                v-for="workspace in workspaces.slice(0, 3)"
+                :key="workspace.id"
+                :to="`/workspaces/${workspace.id}`"
                 class="flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 p-3 transition-colors hover:bg-accent"
               >
                 <UIcon
                   name="i-lucide-users"
                   class="h-4 w-4 text-muted-foreground"
                 />
-                <span class="font-medium">{{ team.name }}</span>
+                <span class="font-medium">{{ workspace.name }}</span>
               </NuxtLink>
               <NuxtLink
-                v-if="teams.length > 3"
-                to="/teams"
+                v-if="workspaces.length > 3"
+                to="/workspaces"
                 class="block text-center text-sm text-muted-foreground hover:text-foreground"
               >
-                View all {{ teams.length }} teams
+                View all {{ workspaces.length }} workspaces
               </NuxtLink>
             </div>
             <div
               v-else
               class="py-4 text-center"
             >
-              <p class="mb-3 text-sm text-muted-foreground">You're not a member of any teams yet.</p>
+              <p class="mb-3 text-sm text-muted-foreground">You're not a member of any workspaces yet.</p>
               <UButton
                 size="sm"
                 variant="outline"
                 color="neutral"
-                to="/teams/new"
+                to="/workspaces/new"
               >
-                Create your first team
+                Create your first workspace
               </UButton>
             </div>
           </div>
@@ -102,9 +103,9 @@ useHead({ title: "Home — Litestar Fullstack" })
           <div class="space-y-1.5">
             <NuxtLink
               v-for="action in [
-                { to: '/teams/new', icon: 'i-lucide-plus', iconClass: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground', title: 'Create a new team', desc: 'Start collaborating' },
+                { to: '/workspaces/new', icon: 'i-lucide-plus', iconClass: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground', title: 'Create a new workspace', desc: 'Start collaborating' },
                 { to: '/profile', icon: 'i-lucide-settings', iconClass: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:bg-orange-500 group-hover:text-white', title: 'Edit your profile', desc: 'Manage account settings' },
-                { to: '/teams', icon: 'i-lucide-users', iconClass: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white', title: 'Browse all teams', desc: 'View your workspaces' },
+                { to: '/workspaces', icon: 'i-lucide-users', iconClass: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white', title: 'Browse all workspaces', desc: 'View your workspaces' },
               ]"
               :key="action.to"
               :to="action.to"

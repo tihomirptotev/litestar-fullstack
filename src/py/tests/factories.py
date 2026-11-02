@@ -59,7 +59,7 @@ class UserFactory(SQLAlchemyFactory[m.User]):
 
     # Ignore relationships to avoid circular dependencies
     roles = Ignore()
-    teams = Ignore()
+    workspaces = Ignore()
     oauth_accounts = Ignore()
     verification_tokens = Ignore()
     reset_tokens = Ignore()
@@ -75,16 +75,16 @@ class AdminUserFactory(UserFactory):
     hashed_password = "hashed_admin_password_123"
 
 
-class TeamFactory(SQLAlchemyFactory[m.Team]):
-    """Factory for Team model."""
+class WorkspaceFactory(SQLAlchemyFactory[m.Workspace]):
+    """Factory for Workspace model."""
 
-    __model__ = m.Team
+    __model__ = m.Workspace
     __set_relationships__ = True
 
     id = Use(uuid4)
-    name = Use(lambda: f"Test Team {uuid4().hex[:8]}")
-    slug = Use(lambda: f"test-team-{uuid4().hex[:8]}")
-    description = Use(lambda: f"Test team description {uuid4().hex[:8]}")
+    name = Use(lambda: f"Test Workspace {uuid4().hex[:8]}")
+    slug = Use(lambda: f"test-workspace-{uuid4().hex[:8]}")
+    description = Use(lambda: f"Test workspace description {uuid4().hex[:8]}")
     is_active = True
 
     # Ignore relationships
@@ -94,27 +94,27 @@ class TeamFactory(SQLAlchemyFactory[m.Team]):
     tags = Ignore()
 
 
-class TeamMemberFactory(SQLAlchemyFactory[m.TeamMember]):
-    """Factory for TeamMember model."""
+class WorkspaceMemberFactory(SQLAlchemyFactory[m.WorkspaceMember]):
+    """Factory for WorkspaceMember model."""
 
-    __model__ = m.TeamMember
+    __model__ = m.WorkspaceMember
     __set_relationships__ = True
     __check_model__ = False  # Association proxies cause validation issues
 
     id = Use(uuid4)
-    role = m.TeamRoles.MEMBER
+    role = m.WorkspaceRoles.MEMBER
     is_owner = False
 
     # These will be set by the caller
-    team_id: UUID | None = None
+    workspace_id: UUID | None = None
     user_id: UUID | None = None
 
     # Ignore relationships and association proxies
-    team = Ignore()
+    workspace = Ignore()
     user = Ignore()
     name = Ignore()
     email = Ignore()
-    team_name = Ignore()
+    workspace_name = Ignore()
 
 
 class EmailVerificationTokenFactory(SQLAlchemyFactory[m.EmailVerificationToken]):
@@ -240,24 +240,24 @@ class UserOauthAccountFactory(SQLAlchemyFactory[m.UserOAuthAccount]):
     user_email = Ignore()
 
 
-class TeamInvitationFactory(SQLAlchemyFactory[m.TeamInvitation]):
-    """Factory for TeamInvitation model."""
+class WorkspaceInvitationFactory(SQLAlchemyFactory[m.WorkspaceInvitation]):
+    """Factory for WorkspaceInvitation model."""
 
-    __model__ = m.TeamInvitation
+    __model__ = m.WorkspaceInvitation
     __set_relationships__ = True
 
     id = Use(uuid4)
     email = Use(lambda: f"invite{uuid4().hex[:8]}@example.com")
-    role = m.TeamRoles.MEMBER
+    role = m.WorkspaceRoles.MEMBER
     is_accepted = False
     invited_by_id: UUID | None = None
     invited_by_email = Use(lambda: f"inviter{uuid4().hex[:8]}@example.com")
 
     # These will be set by the caller
-    team_id: UUID | None = None
+    workspace_id: UUID | None = None
 
     # Ignore relationships
-    team = Ignore()
+    workspace = Ignore()
     invited_by = Ignore()
 
 
@@ -311,42 +311,42 @@ class TagFactory(SQLAlchemyFactory[m.Tag]):
     description = Use(lambda: f"Test tag description {uuid4().hex[:8]}")
 
     # Ignore relationships
-    teams = Ignore()
+    workspaces = Ignore()
 
 
 # Convenience functions for creating complex test scenarios
 
 
-async def create_user_with_team(session: Any, **kwargs: Any) -> tuple[m.User, m.Team]:
-    """Create a user with an associated team."""
+async def create_user_with_workspace(session: Any, **kwargs: Any) -> tuple[m.User, m.Workspace]:
+    """Create a user with an associated workspace."""
     user = UserFactory.build(**kwargs)
     session.add(user)
     await session.flush()  # Get the user ID
 
-    team = TeamFactory.build()
-    session.add(team)
-    await session.flush()  # Get the team ID
+    workspace = WorkspaceFactory.build()
+    session.add(workspace)
+    await session.flush()  # Get the workspace ID
 
-    # Create team membership
-    membership = TeamMemberFactory.build(team_id=team.id, user_id=user.id, role=m.TeamRoles.ADMIN, is_owner=True)
+    # Create workspace membership
+    membership = WorkspaceMemberFactory.build(workspace_id=workspace.id, user_id=user.id, role=m.WorkspaceRoles.ADMIN, is_owner=True)
     session.add(membership)
 
-    return user, team
+    return user, workspace
 
 
-async def create_team_with_members(session: Any, member_count: int = 3, **kwargs: Any) -> tuple[m.Team, list[m.User]]:
-    """Create a team with multiple members."""
-    # Create team owner
+async def create_workspace_with_members(session: Any, member_count: int = 3, **kwargs: Any) -> tuple[m.Workspace, list[m.User]]:
+    """Create a workspace with multiple members."""
+    # Create workspace owner
     owner = UserFactory.build()
     session.add(owner)
     await session.flush()
 
-    team = TeamFactory.build(**kwargs)
-    session.add(team)
+    workspace = WorkspaceFactory.build(**kwargs)
+    session.add(workspace)
     await session.flush()
 
     # Create owner membership
-    owner_membership = TeamMemberFactory.build(team_id=team.id, user_id=owner.id, role=m.TeamRoles.ADMIN, is_owner=True)
+    owner_membership = WorkspaceMemberFactory.build(workspace_id=workspace.id, user_id=owner.id, role=m.WorkspaceRoles.ADMIN, is_owner=True)
     session.add(owner_membership)
 
     # Create additional members
@@ -356,11 +356,11 @@ async def create_team_with_members(session: Any, member_count: int = 3, **kwargs
         session.add(member)
         await session.flush()
 
-        membership = TeamMemberFactory.build(team_id=team.id, user_id=member.id, role=m.TeamRoles.MEMBER)
+        membership = WorkspaceMemberFactory.build(workspace_id=workspace.id, user_id=member.id, role=m.WorkspaceRoles.MEMBER)
         session.add(membership)
         members.append(member)
 
-    return team, members
+    return workspace, members
 
 
 def create_user_with_oauth_account(
@@ -432,7 +432,7 @@ class EmailServiceFactory:
         mock_service.send_welcome_email = AsyncMock(return_value=send_email_result)
         mock_service.send_password_reset_email = AsyncMock(return_value=send_email_result)
         mock_service.send_password_reset_confirmation_email = AsyncMock(return_value=send_email_result)
-        mock_service.send_team_invitation_email = AsyncMock(return_value=send_email_result)
+        mock_service.send_workspace_invitation_email = AsyncMock(return_value=send_email_result)
 
         return cast("Mock", mock_service)
 

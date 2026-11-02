@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from pytest import MonkeyPatch
 
-    from app.db.models import Team, User
+    from app.db.models import Workspace, User
 
 pytestmark = pytest.mark.anyio
 
@@ -81,30 +81,30 @@ def fx_raw_users() -> list[User | dict[str, Any]]:
     ]
 
 
-@pytest.fixture(name="raw_teams")
-def fx_raw_teams() -> list[Team | dict[str, Any]]:
-    """Unstructured team representations."""
+@pytest.fixture(name="raw_workspaces")
+def fx_raw_workspaces() -> list[Workspace | dict[str, Any]]:
+    """Unstructured workspace representations."""
 
     return [
         {
             "id": "97108ac1-ffcb-411d-8b1e-d9183399f63b",
-            "slug": "test-team",
-            "name": "Test Team",
-            "description": "This is a description for a  team.",
+            "slug": "test-workspace",
+            "name": "Test Workspace",
+            "description": "This is a description for a  workspace.",
             "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e4d2",
         },
         {
             "id": "81108ac1-ffcb-411d-8b1e-d91833999999",
-            "slug": "simple-team",
-            "name": "Simple Team",
+            "slug": "simple-workspace",
+            "name": "Simple Workspace",
             "description": "This is a description",
             "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
             "tags": ["new", "another", "extra"],
         },
         {
             "id": "81108ac1-ffcb-411d-8b1e-d91833999998",
-            "slug": "extra-team",
-            "name": "Extra Team",
+            "slug": "extra-workspace",
+            "name": "Extra Workspace",
             "description": "This is a description",
             "owner_id": "5ef29f3c-3560-4d15-ba6b-a2e5c721e999",
             "tags": ["extra"],

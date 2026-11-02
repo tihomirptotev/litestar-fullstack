@@ -1200,8 +1200,8 @@ async def test_unauthorized_access_prevention(
         ("GET", "/api/me"),
         ("PATCH", "/api/me"),
         ("PATCH", "/api/me/password"),
-        ("GET", "/api/teams"),
-        ("POST", "/api/teams"),
+        ("GET", "/api/workspaces"),
+        ("POST", "/api/workspaces"),
     ]
 
     for method, endpoint in protected_endpoints:

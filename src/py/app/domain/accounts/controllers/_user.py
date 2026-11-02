@@ -31,8 +31,8 @@ class UserController(Controller):
         key="users_service",
         load=[
             selectinload(m.User.roles).options(joinedload(m.UserRole.role, innerjoin=True)),
-            selectinload(m.User.teams).options(
-                joinedload(m.TeamMember.team, innerjoin=True).options(load_only(m.Team.name)),
+            selectinload(m.User.workspaces).options(
+                joinedload(m.WorkspaceMember.workspace, innerjoin=True).options(load_only(m.Workspace.name)),
             ),
             selectinload(m.User.oauth_accounts),
         ],

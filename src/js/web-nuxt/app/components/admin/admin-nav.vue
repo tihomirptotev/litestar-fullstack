@@ -10,7 +10,7 @@ const active = (to: string) => (to === "/admin" ? route.path === to : route.path
 const links = [
   { to: "/admin", label: "Dashboard", icon: "i-lucide-layout-dashboard" },
   { to: "/admin/users", label: "Users", icon: "i-lucide-users" },
-  { to: "/admin/teams", label: "Teams", icon: "i-lucide-users-round" },
+  { to: "/admin/workspaces", label: "Workspaces", icon: "i-lucide-users-round" },
   { to: "/admin/audit", label: "Audit log", icon: "i-lucide-scroll-text" },
 ]
 </script>
