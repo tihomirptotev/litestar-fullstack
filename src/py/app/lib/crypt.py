@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# @lat: [[auth#MFA (TOTP)]]
 import asyncio
 import base64
 import importlib

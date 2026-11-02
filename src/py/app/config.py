@@ -5,6 +5,8 @@ from litestar_saq import SAQConfig
 
 from app.lib.settings import get_settings
 
+# @lat: [[architecture#Configuration]]
+
 _settings = get_settings()
 
 compression = _settings.app.get_compression_config()

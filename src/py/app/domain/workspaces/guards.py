@@ -1,4 +1,7 @@
-"""Workspace domain guards."""
+"""Workspace domain guards.
+
+# @lat: [[domains#Workspaces]]
+"""
 
 from __future__ import annotations
 

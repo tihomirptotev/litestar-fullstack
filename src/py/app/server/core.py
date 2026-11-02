@@ -67,6 +67,8 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
 
         Returns:
             The configured app config.
+
+        # @lat: [[architecture#Request lifecycle]]
         """
         settings = get_settings()
         self.app_slug = settings.app.slug

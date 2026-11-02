@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, cast
 
+# @lat: [[architecture#CLI]]
 import anyio
 import click
 from advanced_alchemy.utils.fixtures import open_fixture_async

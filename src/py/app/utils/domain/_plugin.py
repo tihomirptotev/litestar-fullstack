@@ -16,6 +16,8 @@ from app.utils.domain._discovery import (
 )
 from app.utils.domain._state import DiscoveryState
 
+# @lat: [[architecture#Domain auto-discovery]]
+
 if TYPE_CHECKING:
     from litestar import Controller
     from litestar.config.app import AppConfig

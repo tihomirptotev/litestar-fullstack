@@ -7,6 +7,7 @@ from litestar_email import EmailPlugin
 from litestar_granian import GranianPlugin
 from litestar_saq import SAQPlugin
 
+# @lat: [[architecture#Plugin stack]]
 from app import config
 from app.utils.domain import DomainPlugin
 from app.utils.oauth import OAuth2ProviderPlugin

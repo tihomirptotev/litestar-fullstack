@@ -1,4 +1,7 @@
-"""Account domain guards and authentication."""
+"""Account domain guards and authentication.
+
+# @lat: [[auth#JWT guard and access tokens]]
+"""
 
 from __future__ import annotations
 

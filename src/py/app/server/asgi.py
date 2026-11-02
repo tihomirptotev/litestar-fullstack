@@ -11,6 +11,8 @@ def create_app() -> Litestar:
 
     Returns:
         The ASGI application.
+
+    # @lat: [[architecture#Request lifecycle]]
     """
     from litestar_saq.config import QueueConfig
 

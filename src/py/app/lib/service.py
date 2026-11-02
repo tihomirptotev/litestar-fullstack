@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 from advanced_alchemy.base import ModelProtocol
 from advanced_alchemy.extensions.litestar import service
 
+# @lat: [[architecture#Repository & service pattern]]
+
 if TYPE_CHECKING:
     from advanced_alchemy.repository import SQLAlchemyAsyncSlugRepository
 

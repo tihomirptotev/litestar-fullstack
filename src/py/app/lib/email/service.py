@@ -1,5 +1,7 @@
 """Application-specific email service with template rendering.
 
+# @lat: [[infrastructure#Email]]
+
 This module provides the AppEmailService class which wraps the litestar-email
 plugin's EmailService to provide template-aware transactional email methods.
 """

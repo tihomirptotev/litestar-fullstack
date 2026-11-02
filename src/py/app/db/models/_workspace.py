@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import UUIDv7AuditBase
+
+# @lat: [[domains#Database models]]
 from advanced_alchemy.mixins import SlugKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship

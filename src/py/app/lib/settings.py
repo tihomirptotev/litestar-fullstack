@@ -1,5 +1,7 @@
 """All configuration via environment.
 
+# @lat: [[architecture#Configuration]]
+
 Take note of the environment variable prefixes required for each
 settings class, except `AppSettings`.
 """

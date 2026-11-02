@@ -4,6 +4,7 @@ import time
 from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import urlencode
 
+# @lat: [[auth#OAuth2 social login]]
 import jwt
 from httpx_oauth.oauth2 import BaseOAuth2, GetAccessTokenError, OAuth2Error, OAuth2Token
 from litestar import status_codes as status

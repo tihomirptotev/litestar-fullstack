@@ -1,4 +1,7 @@
-"""Log config and utils for the worker instance."""
+"""Log config and utils for the worker instance.
+
+# @lat: [[architecture#Background jobs]]
+"""
 
 from __future__ import annotations
 

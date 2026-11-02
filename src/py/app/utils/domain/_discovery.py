@@ -1,4 +1,7 @@
-"""Discovery logic for domain components."""
+"""Discovery logic for domain components.
+
+# @lat: [[architecture#Domain auto-discovery]]
+"""
 
 from __future__ import annotations
 

@@ -58,6 +58,7 @@ async def test_login_success(
     session: AsyncSession,
 ) -> None:
     """Test successful user login."""
+    # @lat: [[tests#User login#Issues access token for valid credentials]]
     unique_email = f"login-{uuid4().hex[:8]}@example.com"
     user = UserFactory.build(
         email=unique_email,
@@ -85,6 +86,7 @@ async def test_login_invalid_credentials(
     session: AsyncSession,
 ) -> None:
     """Test login with invalid credentials."""
+    # @lat: [[tests#User login#Rejects invalid credentials]]
     unique_email = f"login-invalid-{uuid4().hex[:8]}@example.com"
     user = UserFactory.build(
         email=unique_email,

@@ -1,5 +1,7 @@
 """Litestar-saqlalchemy exception types.
 
+# @lat: [[architecture#Exception handling]]
+
 Also, defines functions that translate service and repository exceptions
 into HTTP exceptions.
 """

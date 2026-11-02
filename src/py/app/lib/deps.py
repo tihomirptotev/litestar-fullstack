@@ -1,5 +1,7 @@
 """Application dependency providers generators.
 
+# @lat: [[architecture#Dependency injection]]
+
 This module contains functions to create dependency providers for services and filters.
 """
 
