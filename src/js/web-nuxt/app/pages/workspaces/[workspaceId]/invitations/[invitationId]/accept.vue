@@ -4,7 +4,8 @@
  * `routes/_app/workspaces/$workspaceId/invitations/$invitationId/accept.tsx`.
  * Accept / decline invitation card with status state machine.
  */
-import { acceptWorkspaceInvitation, getWorkspace, rejectWorkspaceInvitation, type Workspace } from "#shared/api/sdk.gen"
+import { acceptWorkspaceInvitation, getWorkspace, rejectWorkspaceInvitation } from "#shared/api/sdk.gen"
+import type { Workspace } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 definePageMeta({ layout: "app" })

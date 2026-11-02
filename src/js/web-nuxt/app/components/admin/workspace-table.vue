@@ -3,7 +3,8 @@
  * WorkspaceTable — Nuxt port of `components/admin/workspace-table.tsx`.
  * Paginated admin workspace list with search; link to per-workspace detail.
  */
-import { type AdminWorkspaceSummary, adminListWorkspaces } from "#shared/api/sdk.gen"
+import { adminListWorkspaces } from "#shared/api/sdk.gen"
+import type { AdminWorkspaceSummary } from "#shared/api/types.gen"
 
 const PAGE_SIZE = 25
 

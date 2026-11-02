@@ -5,7 +5,8 @@
  * clicking an avatar switches it in the auth store.
  */
 import { computed, ref, watch } from "vue"
-import { listWorkspaces, type Workspace } from "#shared/api/sdk.gen"
+import { listWorkspaces } from "#shared/api/sdk.gen"
+import type { Workspace } from "#shared/api/types.gen"
 import { useAuth } from "~/composables/useAuth"
 
 const auth = useAuth()

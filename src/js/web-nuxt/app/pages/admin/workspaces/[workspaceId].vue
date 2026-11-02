@@ -3,7 +3,8 @@
  * Admin workspace detail — Nuxt port of `routes/_app/admin/workspaces/$workspaceId.tsx`.
  * View/update/delete a single workspace as a superuser.
  */
-import { type AdminWorkspaceDetail, adminDeleteWorkspace, adminGetWorkspace, adminUpdateWorkspace } from "#shared/api/sdk.gen"
+import { adminDeleteWorkspace, adminGetWorkspace, adminUpdateWorkspace } from "#shared/api/sdk.gen"
+import type { AdminWorkspaceDetail } from "#shared/api/types.gen"
 import { apiErrorMessage } from "~/composables/api"
 
 const route = useRoute()

@@ -6,7 +6,8 @@
  * users who can manage members.
  */
 import { computed, ref, watch } from "vue"
-import { deleteWorkspaceInvitation, getWorkspace, listWorkspaceInvitations, removeMemberFromWorkspace, type Workspace, type WorkspaceInvitation, type WorkspaceMember } from "#shared/api/sdk.gen"
+import { deleteWorkspaceInvitation, getWorkspace, listWorkspaceInvitations, removeMemberFromWorkspace } from "#shared/api/sdk.gen"
+import { type Workspace, type WorkspaceInvitation, type WorkspaceMember } from "#shared/api/types.gen"
 import { useAuth } from "~/composables/useAuth"
 
 definePageMeta({ layout: "app" })
