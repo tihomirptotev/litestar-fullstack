@@ -35,9 +35,6 @@ data:
   # CORS Settings
   ALLOWED_CORS_ORIGINS: '{{ allowed_cors_origins }}'
 
-  # Vite Settings
-  VITE_DEV_MODE: "false"
-
   # Email Settings (configure as needed)
   EMAIL_BACKEND: "{{ email_backend | default('console') }}"
   EMAIL_FROM_ADDRESS: "{{ email_from_address | default('noreply@localhost') }}"

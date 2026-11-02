@@ -333,7 +333,6 @@ ensure_environment() {
     # Note: Railway injects PORT automatically, we reference it for LITESTAR_PORT
     railway variables --set "SECRET_KEY=${SECRET_KEY}" \
         --set "LITESTAR_DEBUG=false" \
-        --set "VITE_DEV_MODE=false" \
         --set "LITESTAR_TRUSTED_PROXIES=*" \
         --set "DATABASE_ECHO=false" \
         --set "SQLALCHEMY_LOG_LEVEL=30" \

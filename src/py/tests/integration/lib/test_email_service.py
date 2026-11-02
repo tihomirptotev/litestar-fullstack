@@ -8,6 +8,8 @@ from uuid import uuid4
 import pytest
 from litestar_email import EmailMultiAlternatives, InMemoryBackend
 
+from tests.utils.events import expect_outbox_count
+
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
 
@@ -41,8 +43,8 @@ async def test_user_registration_triggers_verification_email(
     data = response.json()
     assert data["email"] == unique_email
 
-    # Wait for async event listeners to complete
-    await await_events()
+    # Wait until the user_created listener has actually sent the email
+    await await_events(condition=expect_outbox_count(1))
 
     # Check that verification email was sent
     assert len(InMemoryBackend.outbox) == 1
@@ -67,7 +69,7 @@ async def test_resend_verification_triggers_email_service(
         },
     )
     assert response.status_code == 201
-    await await_events()
+    await await_events(condition=expect_outbox_count(1))
 
     # Clear the outbox after signup
     InMemoryBackend.clear()
@@ -75,7 +77,7 @@ async def test_resend_verification_triggers_email_service(
     # Request resend
     response = await client.post("/api/email-verification/request", json={"email": unique_email})
     assert response.status_code == 201
-    await await_events()
+    await await_events(condition=expect_outbox_count(1))
 
     # Check that email was sent
     assert len(InMemoryBackend.outbox) == 1
@@ -99,7 +101,7 @@ async def test_password_reset_request_triggers_email_service(
         },
     )
     assert response.status_code == 201
-    await await_events()
+    await await_events(condition=expect_outbox_count(1))
 
     # Clear the outbox after signup
     InMemoryBackend.clear()
@@ -108,7 +110,7 @@ async def test_password_reset_request_triggers_email_service(
     response = await client.post("/api/access/forgot-password", json={"email": unique_email})
 
     assert response.status_code == 201
-    await await_events()
+    await await_events(condition=expect_outbox_count(1))
     data = response.json()
     assert "reset" in data["message"].lower() or "password" in data["message"].lower()
 
@@ -135,7 +137,9 @@ async def test_registration_sends_verification_email_with_correct_content(
     )
 
     assert response.status_code == 201
-    await await_events()
+
+    # Wait until the user_created listener has actually sent the email
+    await await_events(condition=expect_outbox_count(1))
 
     # Check email content
     assert len(InMemoryBackend.outbox) == 1
@@ -160,7 +164,7 @@ async def test_multiple_signups_send_multiple_emails(
         {"email": f"user3_{unique_suffix}@example.com", "name": "User Three"},
     ]
 
-    for user in users:
+    for i, user in enumerate(users, start=1):
         response = await client.post(
             "/api/access/signup",
             json={
@@ -170,7 +174,7 @@ async def test_multiple_signups_send_multiple_emails(
             },
         )
         assert response.status_code == 201
-        await await_events()
+        await await_events(condition=expect_outbox_count(i))
 
     # Check that all emails were sent
     assert len(InMemoryBackend.outbox) == 3

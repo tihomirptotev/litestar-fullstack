@@ -13,8 +13,6 @@ os.environ.update(
         "SAQ_WEB_ENABLED": "True",
         "SAQ_PROCESSES": "1",
         "SAQ_CONCURRENCY": "1",
-        "VITE_PORT": "3006",
-        "VITE_DEV_MODE": "True",
         "EMAIL_BACKEND": "memory",
         "LITESTAR_DEBUG": "False",
     }

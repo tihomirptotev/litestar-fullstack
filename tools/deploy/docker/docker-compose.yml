@@ -80,7 +80,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      VITE_DEV_MODE: "false"
       SAQ_USE_SERVER_LIFESPAN: "false"
     env_file:
       - .env.docker

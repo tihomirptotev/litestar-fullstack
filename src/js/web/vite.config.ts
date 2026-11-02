@@ -2,7 +2,6 @@ import path from "node:path"
 import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
-import litestar from "litestar-vite-plugin"
 import { defineConfig } from "vite"
 
 export default defineConfig({
@@ -17,16 +16,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "../../py/app/server/static/web"),
     emptyOutDir: true,
   },
-  plugins: [
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
-    tailwindcss(),
-    react(),
-    litestar({
-      input: ["src/main.tsx", "src/styles.css"],
-      bundleDir: path.resolve(__dirname, "../../py/app/server/static/web"),
-      hotFile: path.resolve(__dirname, "../../py/app/server/static/web/hot"),
-    }),
-  ],
+  plugins: [tanstackRouter({ target: "react", autoCodeSplitting: true }), tailwindcss(), react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

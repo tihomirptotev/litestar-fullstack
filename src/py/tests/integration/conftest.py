@@ -9,7 +9,7 @@ from advanced_alchemy.utils.fixtures import open_fixture_async
 from litestar.testing import AsyncTestClient
 
 from app import config
-from app.db.models import EmailVerificationToken, PasswordResetToken, Workspace, WorkspaceInvitation, User
+from app.db.models import EmailVerificationToken, PasswordResetToken, User, Workspace, WorkspaceInvitation
 from app.domain.accounts.guards import create_access_token
 from app.domain.accounts.services import RoleService, UserService
 from app.domain.workspaces.services import WorkspaceService
@@ -407,16 +407,25 @@ async def fx_test_workspace_invitation(
 
 
 @pytest.fixture
-def await_events() -> Callable[[], Coroutine[Any, Any, None]]:
+def await_events() -> Callable[..., Coroutine[Any, Any, None]]:
     """Fixture providing a coroutine to await all pending events.
 
     This fixture yields control to the event loop to allow async
     event listeners to complete processing.
+
+    Args:
+        condition: Optional predicate (see ``wait_for_events``). When given,
+            the helper polls it and fails fast (with a clear timeout error)
+            instead of relying on a fixed sleep — use this for deterministic
+            assertions on side effects such as emails in the outbox.
 
     Usage:
         async def test_something(client, await_events):
             response = await client.post(...)
             await await_events()
             assert len(InMemoryBackend.outbox) == 1
+
+            # Deterministic variant:
+            await await_events(condition=expect_outbox_count(1))
     """
     return wait_for_events

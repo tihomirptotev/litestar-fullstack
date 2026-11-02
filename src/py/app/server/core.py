@@ -29,6 +29,7 @@ from app.lib.exceptions import (
 from app.lib.settings import AppSettings, get_settings, provide_app_settings
 from app.lib.validation import ValidationError
 from app.server import plugins
+from app.server.static import create_spa_router
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -80,12 +81,20 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         app_config = auth.on_app_init(app_config)
         app_config.cors_config = config.cors
 
+        app_config.route_handlers.append(
+            create_spa_router(
+                path=settings.app.STATIC_URL,
+                directories=[settings.app.STATIC_DIR],
+                index_html=settings.app.STATIC_DIR / "index.html",
+                name="spa",
+            ),
+        )
+
         app_config.plugins.extend(
             [
                 plugins.structlog,
                 plugins.granian,
                 plugins.alchemy,
-                plugins.vite,
                 plugins.get_saq_plugin(),
                 plugins.problem_details,
                 plugins.oauth2_provider,

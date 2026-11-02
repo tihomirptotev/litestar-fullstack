@@ -190,7 +190,10 @@ tasks:
 
   build-assets:
     desc: Build frontend assets
-    cmd: uv run app assets build
+    dir: src/js/web
+    cmds:
+      - bun install
+      - bun run build
 
   build-wheel:
     desc: Build Python wheel
@@ -321,4 +324,6 @@ tasks:
     desc: Export OpenAPI schema and generate TypeScript types/client
     cmds:
       - mkdir -p tmp
-      - TMPDIR=$PWD/tmp uv run app assets generate-types
+      - TMPDIR=$PWD/tmp uv run app schema openapi --output src/js/web/src/lib/generated/openapi.json
+      - cmd: bun run openapi-ts
+        dir: src/js/web

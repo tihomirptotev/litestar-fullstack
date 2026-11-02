@@ -13,13 +13,6 @@ import { routeTree } from "./routeTree.gen"
 import "./styles.css"
 import reportWebVitals from "./reportWebVitals.ts"
 
-// Extend Window type for CSRF token injected by litestar-vite
-declare global {
-  interface Window {
-    __LITESTAR_CSRF__?: string
-  }
-}
-
 const queryClient = new QueryClient()
 
 const apiUrl = import.meta.env.VITE_API_URL ?? ""
@@ -33,20 +26,6 @@ client.setConfig({
     }
     return window.localStorage.getItem("access_token") ?? undefined
   },
-})
-
-// Add CSRF token to all non-GET requests
-// litestar-vite injects the token into window.__LITESTAR_CSRF__
-client.interceptors.request.use((request, _options) => {
-  const method = request.method?.toUpperCase()
-  // Only add CSRF header for unsafe methods (non-GET/HEAD/OPTIONS)
-  if (method && !["GET", "HEAD", "OPTIONS"].includes(method)) {
-    const csrfToken = window.__LITESTAR_CSRF__
-    if (csrfToken) {
-      request.headers.set("X-XSRF-TOKEN", csrfToken)
-    }
-  }
-  return request
 })
 
 // Silent token refresh state

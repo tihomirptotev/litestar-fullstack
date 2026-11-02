@@ -28,7 +28,6 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "framer-motion": "^12.29.0",
-        "litestar-vite-plugin": "^0.17.0",
         "lucide-react": "^0.563.0",
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
@@ -724,7 +723,6 @@
 
     "lightningcss-win32-x64-msvc": ["lightningcss-win32-x64-msvc@1.30.2", "", { "os": "win32", "cpu": "x64" }, "sha512-5g1yc73p+iAkid5phb4oVFMB45417DkRevRbt/El/gKXJk4jid+vPFF/AXbxn05Aky8PapwzZrdJShv5C0avjw=="],
 
-    "litestar-vite-plugin": ["litestar-vite-plugin@0.17.0", "", { "dependencies": { "picocolors": "^1.1.1", "vite-plugin-full-reload": "^1.2.0" }, "peerDependencies": { "vite": "^6.0.0 || ^7.0.0" }, "bin": { "clean-orphaned-assets": "tools/clean.js", "litestar-vite-typegen": "dist/js/typegen-cli.js" } }, "sha512-3n3MLB4D1XvWq9Dl+vPdaut9HiaVz6AN1eVNhJGD/P7SS0fqDi9WjoHc3J/oYHILJBb2kw2hmPKtNC8qTgsHtw=="],
 
     "lodash": ["lodash@4.17.21", "", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
 

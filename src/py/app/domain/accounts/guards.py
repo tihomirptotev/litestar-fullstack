@@ -164,6 +164,7 @@ auth = OAuth2PasswordBearerAuth[m.User](
         "/api/auth/oauth/*",
         "^/schema",
         "^/public/",
+        "^/static/web",
     ],
 )
 """OAuth2 JWT Authentication."""

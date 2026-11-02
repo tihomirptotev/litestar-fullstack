@@ -13,7 +13,7 @@ It includes the following capabilities out of the box:
   :doc:`SAQ <saq:index>`, `TailwindCSS <https://tailwindcss.com/>`_, and
   :doc:`Advanced Alchemy <advanced-alchemy:index>` with features to reference:
 
-  - SPA frontend with React 19 and Vite (SPA mode via `litestar-vite <https://github.com/cofin/litestar-vite>`_)
+  - SPA frontend with React 19 and Vite (served by the app's static files router)
   - JWT auth with refresh tokens, MFA, OAuth, and admin tooling
   - Service/repository pattern with UUIDv7 primary keys
   - Background jobs via :doc:`SAQ <saq:index>` and structured logging with :doc:`structlog <structlog:index>`

@@ -18,9 +18,8 @@
   **react-hook-form** + **zod** for forms; **sonner** toasts; custom ThemeProvider.
 - **shadcn/ui** components on Radix (incl. a 584-line custom `sidebar.tsx`),
   Tailwind CSS v4, lucide icons, framer-motion.
-- Built via Vite + `litestar-vite-plugin` in SPA mode → bundles into
-  `src/py/app/server/static/web/`; CSRF token injected via
-  `window.__LITESTAR_CSRF__`; bearer token in `localStorage`.
+- Built via Vite (bun executor) in SPA mode → bundles into
+  `src/py/app/server/static/web/`; bearer token in `localStorage`.
 
 **`src/js/templates/` — React Email** templates compiled by Bun to static HTML for
 the backend. Independent of the SPA — out of scope for this rewrite (optional
@@ -37,8 +36,7 @@ later port to Vue Email).
    (auth headers, localStorage token, backend serving static). Later optionally
    move to hybrid/SSR via `routeRules` — but SSR requires moving the access token
    out of `localStorage` into an httpOnly cookie (decision point).
-3. **Dev workflow**: replace `litestar-vite-plugin` (React/Vite-specific) with
-   `nitro.devProxy` proxying `/api` → `http://127.0.0.1:8000`. Production build
+3. **Dev workflow**: use `nitro.devProxy` proxying `/api` → `http://127.0.0.1:8000`. Production build
    output → backend static dir, as today.
 4. Keep Bun as executor and keep Biome for lint/format (drop Prettier/eslint).
 
@@ -146,10 +144,8 @@ Follow the nuxt-ui dashboard layout recipe:
 
 ## Risks & Decision Points
 
-1. **`litestar-vite-plugin` has no Nuxt equivalent** — dev proxy + build output
-   config must be hand-rolled; CSRF injection mechanism
-   (`window.__LITESTAR_CSRF__`) needs verification against how the plugin injects
-   it (it hooks Vite's transform pipeline).
+1. **Dev proxy + build output config must be hand-rolled** — the old
+   `litestar-vite-plugin` was removed; `nitro.devProxy` replaces its dev proxy role.
 2. **localStorage bearer token + SSR are incompatible** — if SSR is wanted later,
    the backend should set an httpOnly cookie; decide during Phase 0.
 3. **Silent refresh queue** logic is subtle (failed-request queuing,

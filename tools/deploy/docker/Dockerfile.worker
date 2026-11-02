@@ -98,8 +98,9 @@ RUN mkdir -p src/py/app/server/static/web src/py/app/server/static/email
 
 RUN cd src/js/templates && bun run build
 
-RUN uv run app assets build \
-    && cp src/js/web/index.html src/py/app/server/static/web/index.html \
+RUN cd src/js/web \
+    && bun run build \
+    && cd /workspace/app \
     && uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
     && uv build --wheel
 

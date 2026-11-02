@@ -32,7 +32,6 @@ from litestar.plugins.structlog import StructlogConfig
 from litestar.utils.module_loader import module_to_os_path
 from litestar_email import EmailConfig, ResendConfig, SMTPConfig
 from litestar_saq import CronJob, QueueConfig, SAQConfig
-from litestar_vite import PathConfig, RuntimeConfig, TypeGenConfig, ViteConfig
 
 from app.__metadata__ import __version__ as current_version
 from app.utils.env import get_env
@@ -107,42 +106,6 @@ class DatabaseSettings:
                 script_config=self.MIGRATION_CONFIG,
                 script_location=self.MIGRATION_PATH,
             ),
-        )
-
-
-@dataclass
-class ViteSettings:
-    """Vite build tool configurations."""
-
-    DEV_MODE: bool = field(default_factory=get_env("VITE_DEV_MODE", False))
-    """Start `vite` development server."""
-    BUNDLE_DIR: Path = field(default_factory=get_env("VITE_BUNDLE_DIR", STATIC_DIR))
-    """Bundle directory for built assets."""
-    ASSET_URL: str = field(default_factory=get_env("ASSET_URL", "/static/"))
-    """Base URL for assets."""
-    TRUSTED_PROXIES: str | None = field(default_factory=get_env("LITESTAR_TRUSTED_PROXIES", None))
-    """Trust X-Forwarded-* headers from these proxies. Use "*" to trust all."""
-
-    def get_config(self, base_dir: Path = BASE_DIR.parent.parent) -> ViteConfig:
-        """Get Vite configuration.
-
-        Args:
-            base_dir: Base directory for resolving paths.
-
-        Returns:
-            The Vite configuration.
-        """
-        js_home = base_dir / "js" / "web"
-        return ViteConfig(
-            mode="spa",
-            dev_mode=self.DEV_MODE,
-            runtime=RuntimeConfig(executor="bun", trusted_proxies=self.TRUSTED_PROXIES),
-            paths=PathConfig(
-                root=js_home,
-                bundle_dir=self.BUNDLE_DIR,
-                asset_url=self.ASSET_URL,
-            ),
-            types=TypeGenConfig(output=Path("src/lib/generated")),
         )
 
 
@@ -326,7 +289,7 @@ class AppSettings:
     """URL Location for Static assets."""
     BASE_URL: str | None = None
     """Fully qualified path to optional use for URL generation."""
-    DEV_MODE: bool = field(default_factory=get_env("VITE_DEV_MODE", False))
+    DEV_MODE: bool = field(default_factory=get_env("LITESTAR_DEV_MODE", False))
     """Toggle dev mode flag.  This can be used enable extra processes during development."""
     ENABLE_INSTRUMENTATION: bool = False
     """Enable OpenTelemetry instrumentation"""
@@ -524,7 +487,6 @@ class LogSettings:
 class Settings:
     app: AppSettings = field(default_factory=AppSettings)
     db: DatabaseSettings = field(default_factory=DatabaseSettings)
-    vite: ViteSettings = field(default_factory=ViteSettings)
     server: ServerSettings = field(default_factory=ServerSettings)
     saq: SaqSettings = field(default_factory=SaqSettings)
     log: LogSettings = field(default_factory=LogSettings)
@@ -544,13 +506,12 @@ class Settings:
             db: DatabaseSettings = DatabaseSettings()
             server: ServerSettings = ServerSettings()
             saq: SaqSettings = SaqSettings()
-            vite: ViteSettings = ViteSettings()
             app: AppSettings = AppSettings()
             log: LogSettings = LogSettings()
         except Exception as e:  # noqa: BLE001
             logger.fatal("Could not load settings. %s", e)
             sys.exit(1)
-        return Settings(app=app, db=db, vite=vite, server=server, saq=saq, log=log)
+        return Settings(app=app, db=db, server=server, saq=saq, log=log)
 
 
 def get_settings(dotenv_filename: str = ".env") -> Settings:

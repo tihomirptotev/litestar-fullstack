@@ -2,13 +2,11 @@ import type { CreateClientConfig } from "./client.gen"
 import { client } from "./client.gen"
 
 /**
- * Auth/CSRF client wiring for the generated hey-api client — mirrors the
+ * Auth client wiring for the generated hey-api client — mirrors the
  * React app's `src/main.tsx` setup:
  * - bearer access token from localStorage (SPA mode; move to httpOnly
  *   cookies if/when SSR is adopted)
  * - cookie credentials for the Litestar session
- * - CSRF header (`X-XSRF-TOKEN`) from `window.__LITESTAR_CSRF__` on
- *   mutating requests
  * - silent 401 token refresh with request queuing
  */
 
@@ -29,12 +27,6 @@ export const setAccessToken = (token: string | null) => {
     localStorage.setItem(ACCESS_TOKEN_KEY, token)
   } else {
     localStorage.removeItem(ACCESS_TOKEN_KEY)
-  }
-}
-
-declare global {
-  interface Window {
-    __LITESTAR_CSRF__?: string
   }
 }
 
@@ -77,20 +69,6 @@ export function configureClient({ baseUrl }: { baseUrl?: string } = {}) {
       }
       return window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? undefined
     },
-  })
-
-  // Add CSRF token to all non-GET requests.
-  // litestar-vite injects the token into window.__LITESTAR_CSRF__.
-  client.interceptors.request.use((request, _options) => {
-    const method = request.method?.toUpperCase()
-    // Only add CSRF header for unsafe methods (non-GET/HEAD/OPTIONS)
-    if (method && !["GET", "HEAD", "OPTIONS"].includes(method)) {
-      const csrfToken = window.__LITESTAR_CSRF__
-      if (csrfToken) {
-        request.headers.set("X-XSRF-TOKEN", csrfToken)
-      }
-    }
-    return request
   })
 
   // Silent token refresh — uses the error interceptor with the new client API.

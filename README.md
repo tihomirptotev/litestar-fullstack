@@ -26,7 +26,7 @@ It contains most of the boilerplate required for a production web API with featu
 
 - Latest Litestar configured with best practices
 - Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](https://github.com/emmett-framework/granian)
-- Frontend integrated with Vite in SPA mode and React Email templates compiled to static HTML
+- Frontend integrated with Vite (bundled with bun) and React Email templates compiled to static HTML
 - JWT auth with refresh tokens, MFA, OAuth, and admin surfaces
 - Multi-stage Docker build using a minimal Python 3.13 runtime image (including a distroless variant)
 - Workspace and role management with service/repository patterns and Advanced Alchemy filters

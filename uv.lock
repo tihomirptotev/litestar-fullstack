@@ -129,7 +129,6 @@ dependencies = [
     { name = "litestar-email", extra = ["smtp"] },
     { name = "litestar-granian", extra = ["uvloop"] },
     { name = "litestar-saq", extra = ["hiredis"] },
-    { name = "litestar-vite" },
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "pyotp" },
     { name = "python-dotenv" },
@@ -215,7 +214,6 @@ requires-dist = [
     { name = "litestar-email", extras = ["smtp"], specifier = ">=0.3.0" },
     { name = "litestar-granian", extras = ["uvloop"] },
     { name = "litestar-saq", extras = ["hiredis"] },
-    { name = "litestar-vite", specifier = ">=0.15.0b4" },
     { name = "psycopg", extras = ["pool", "binary"] },
     { name = "pyotp", specifier = ">=2.9.0" },
     { name = "python-dotenv" },
@@ -1130,21 +1128,6 @@ wheels = [
 [package.optional-dependencies]
 hiredis = [
     { name = "hiredis" },
-]
-
-[[package]]
-name = "litestar-vite"
-version = "0.17.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "httpx" },
-    { name = "litestar" },
-    { name = "typing-extensions" },
-    { name = "websockets" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1d/0b/def4b44f99074d34f2eec8b351faef82e81d76fdba8ba2aa8a26aa7a4ace/litestar_vite-0.17.0.tar.gz", hash = "sha256:2ab4de632906b586b41b529163a97390ddea26f07123cab3ecba6c07ea5b358e", size = 405766, upload-time = "2026-01-19T17:22:57.453Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/30/c6/00f0d1bb7fcbd0a39975288ac281b6cf4cd246294d9d91782f4f08944e0f/litestar_vite-0.17.0-py3-none-any.whl", hash = "sha256:44d509b03bf25949874df2581c89c1390178b2df470158f7e31f73598d8c374e", size = 226986, upload-time = "2026-01-19T17:22:53.853Z" },
 ]
 
 [[package]]

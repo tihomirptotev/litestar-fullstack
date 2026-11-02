@@ -180,8 +180,6 @@ local.duckdb
 requirements.txt
 dist-ssr
 *.local
-src/js/web/.litestar.json
-src/js/web/public/hot
 
 # Email template build output
 src/py/app/server/static/email/

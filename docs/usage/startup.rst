@@ -7,15 +7,21 @@ This section describes how to start the application in development and productio
 Development
 ^^^^^^^^^^^
 
-Set ``VITE_DEV_MODE=true`` to enable the Vite dev server, then run:
+Run the Vite dev server (via bun) in one terminal:
+
+.. code-block:: bash
+
+    cd src/js/web
+    bun run dev
+
+And the Litestar server in another:
 
 .. code-block:: bash
 
     uv run app run
 
-This starts the Litestar API, SAQ workers (if ``SAQ_USE_SERVER_LIFESPAN`` is enabled),
-and the Vite dev server. Assets are served under ``/static/web/`` and the dev server
-listens on ``VITE_PORT`` (default ``3006``) when set.
+The dev server listens on ``VITE_PORT`` (default ``3006``) and proxies API
+requests to the backend application. Assets are served under ``/static/web/``.
 
 Production
 ^^^^^^^^^^
@@ -24,16 +30,16 @@ Build the frontend assets into ``src/py/app/server/static/web``:
 
 .. code-block:: bash
 
-    uv run app assets build
+    cd src/js/web
+    bun run build
 
-Then run the server with ``VITE_DEV_MODE=false`` (or unset):
+Then run the server:
 
 .. code-block:: bash
 
     uv run app run
 
 .. note::
-   - ``VITE_DEV_MODE``: Enable the Vite dev server.
    - ``VITE_PORT``: Optional dev server port override.
    - ``ASSET_URL``: Optional asset base path (defaults to ``/static/web/``).
    - ``SAQ_USE_SERVER_LIFESPAN``: Auto start/stop SAQ processes with the app.

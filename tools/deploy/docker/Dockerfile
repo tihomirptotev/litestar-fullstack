@@ -120,7 +120,9 @@ RUN cd src/js/templates && bun run build
 
 # Build frontend assets and create wheel
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-    uv run app assets build \
+    cd src/js/web \
+    && bun run build \
+    && cd /workspace/app \
     && uv sync ${UV_INSTALL_ARGS} --frozen --no-editable \
     && uv build
 

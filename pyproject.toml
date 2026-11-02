@@ -21,7 +21,6 @@ dependencies = [
   "psycopg[pool,binary]",
   "python-dotenv",
   "litestar-saq[hiredis]",
-  "litestar-vite>=0.15.0b4",
   "litestar-granian[uvloop]",
   "litestar-email[smtp]>=0.3.0",
   "httpx-oauth",
@@ -29,7 +28,7 @@ dependencies = [
   "qrcode[pil]>=7.4.0",
 ]
 description = "Reference application for building a fullstack application with Litestar."
-keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "vite", "spa"]
+keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi"]
 license = { text = "MIT" }
 name = "app"
 readme = "README.md"
